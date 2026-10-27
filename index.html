@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>آکادمی مهندسان کسر | فصل دوم ریاضی ششم و پیش‌نیازها</title>
+    <style>
+        /* ==========================================================================
+           [BLOCK 1: CSS VARIABLES & ERGONOMIC DESIGN TOKENS]
+           ========================================================================== */
+        :root {
+            --bg-main: #f0f4f8;
+            --bg-card: #ffffff;
+            --bg-panel: #e2e8f0;
+            --primary: #1e40af;
+            --primary-light: #2563eb;
+            --secondary: #0d9488;
+            --secondary-light: #14b8a6;
+            --accent: #d97706;
+            --accent-light: #fbbf24;
+            --success: #15803d;
+            --nudge: #b45309;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: #cbd5e1;
+
+            --touch-min: 52px;
+            --radius-md: 14px;
+            --radius-lg: 22px;
+            --shadow-soft: 0 4px 12px rgba(15, 23, 42, 0.08);
+            --shadow-pop: 0 8px 24px rgba(15, 23, 42, 0.14);
+
+            --font-fa: 'Vazirmatn', 'Shabnam', 'Sahel', 'IRANSans', 'Yekan', 'Tahoma', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-fa);
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.75;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ==========================================================================
+           [BLOCK 2: TOP NAVIGATION BAR & HUD]
+           ========================================================================== */
+        .app-header {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            color: #ffffff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: var(--shadow-soft);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .student-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.14);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            padding: 6px 14px;
+            border-radius: var(--radius-md);
+            font-weight: bold;
+            cursor: pointer;
+            min-height: var(--touch-min);
+        }
+
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .stat-pill {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+            font-size: 0.92rem;
+            min-height: 46px;
+        }
+
+        /* ==========================================================================
+           [BLOCK 3: ERGONOMIC BUTTONS & SPA CONTAINERS]
+           ========================================================================== */
+        .btn {
+            font-family: var(--font-fa);
+            min-height: var(--touch-min);
+            min-width: var(--touch-min);
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            border: 2px solid transparent;
+            font-size: 0.96rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.12s ease, background-color 0.2s ease;
+            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.18);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-primary { background-color: var(--primary-light); color: #fff; }
+        .btn-primary:hover { background-color: var(--primary); }
+
+        .btn-secondary { background-color: var(--secondary); color: #fff; }
+        .btn-secondary:hover { background-color: #0f766e; }
+
+        .btn-accent { background-color: var(--accent); color: #fff; }
+        .btn-accent:hover { background-color: #b45309; }
+
+        .btn-success { background-color: var(--success); color: #fff; }
+
+        .btn-soft {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            border-color: var(--border-color);
+        }
+        .btn-soft:hover { background-color: #e2e8f0; }
+
+        .btn-outline {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .app-main {
+            flex: 1;
+            max-width: 1140px;
+            width: 100%;
+            margin: 18px auto;
+            padding: 0 16px 125px 16px;
+        }
+
+        .spa-view { display: none; animation: fadeInView 0.22s ease-out; }
+        .spa-view.active { display: block; }
+
+        @keyframes fadeInView {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-surface {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            box-shadow: var(--shadow-soft);
+            border: 2px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        /* ==========================================================================
+           [BLOCK 4: DASHBOARD & ECO-DOME BANNER]
+           ========================================================================== */
+        .dome-hero {
+            background: linear-gradient(135deg, #064e3b, #0f766e, #1e3a8a);
+            color: #ffffff;
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: var(--shadow-pop);
+            border: 3px solid #14b8a6;
+        }
+
+        .dome-info { flex: 1 1 320px; }
+
+        .dome-visual-box {
+            flex: 0 0 250px;
+            height: 145px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .dome-visual-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .progress-track {
+            width: 100%;
+            height: 16px;
+            background: rgba(15, 23, 42, 0.45);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fbbf24, #34d399);
+            width: 10%;
+            transition: width 0.4s ease;
+        }
+
+        .stations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 18px;
+        }
+
+        .station-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 2.5px solid var(--border-color);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .station-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .station-icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            background: #eff6ff;
+            border: 2px solid #bfdbfe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.9rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .station-icon-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .station-num-tag {
+            background: var(--primary);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: bold;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .station-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 10px;
+            border-right: 4px solid var(--secondary);
+        }
+
+        .station-status-pills {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
+        }
+
+        .status-chip {
+            padding: 3px 9px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+        .status-chip.done { background: #dcfce7; color: var(--success); }
+
+        .station-actions { display: flex; flex-direction: column; gap: 8px; }
+        .station-games-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        /* ==========================================================================
+           [BLOCK 5: MATHEMATICAL FRACTION & MIXED NUMBER TYPOGRAPHY]
+           ========================================================================== */
+        .math-expr {
+            display: inline-flex;
+            align-items: center;
+            direction: ltr;
+            gap: 6px;
+            font-weight: bold;
+            font-size: 1.35rem;
+            vertical-align: middle;
+            background: #f8fafc;
+            padding: 4px 12px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            margin: 2px 4px;
+        }
+
+        .mixed-whole {
+            font-size: 1.45rem;
+            color: var(--primary);
+            padding-right: 2px;
+        }
+
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            line-height: 1.1;
+        }
+
+        .frac-num {
+            border-bottom: 2.5px solid var(--text-main);
+            padding: 0 6px 2px 6px;
+            min-width: 26px;
+            text-align: center;
+        }
+
+        .frac-den {
+            padding: 2px 6px 0 6px;
+            min-width: 26px;
+            text-align: center;
+        }
+
+        /* ورودی‌های تعاملی کسر و عدد مخلوط */
+        .frac-input-group {
+            display: inline-flex;
+            align-items: center;
+            direction: ltr;
+            gap: 8px;
+            background: #eff6ff;
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 2px solid #93c5fd;
+        }
+
+        .math-num-input {
+            width: 64px;
+            height: 50px;
+            text-align: center;
+            font-family: var(--font-fa);
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: 2px solid var(--primary-light);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text-main);
+            outline: none;
+        }
+        .math-num-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.25);
+        }
+
+        /* ==========================================================================
+           [BLOCK 6: INTERACTIVE VISUAL MANIPULATIVES (SHAPES, GRIDS, NUMBER LINE)]
+           ========================================================================== */
+        .workbench-box {
+            background: #f8fafc;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            margin: 14px 0;
+        }
+
+        .visual-unit-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            align-items: center;
+            margin: 14px 0;
+        }
+
+        .unit-bar {
+            display: inline-grid;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            overflow: hidden;
+            background: #ffffff;
+            min-width: 160px;
+            height: 64px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .unit-cell {
+            border-left: 1.5px solid #94a3b8;
+            border-top: 1.5px solid #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: background 0.15s;
+        }
+        .unit-cell.filled { background: #38bdf8; color: #0f172a; }
+        .unit-cell.hatched {
+            background: repeating-linear-gradient(
+                45deg,
+                #38bdf8,
+                #38bdf8 8px,
+                #f59e0b 8px,
+                #f59e0b 16px
+            );
+            color: #fff;
+        }
+        .unit-cell.filled-alt { background: #34d399; color: #064e3b; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .option-card-btn {
+            min-height: 64px;
+            background: #ffffff;
+            border: 2.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            font-family: var(--font-fa);
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        .option-card-btn:hover {
+            border-color: var(--primary-light);
+            background: #eff6ff;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: #fff;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        /* ==========================================================================
+           [BLOCK 7: MENTOR BUBBLE & MODALS]
+           ========================================================================== */
+        .mentor-container {
+            position: fixed;
+            bottom: 14px;
+            left: 14px;
+            right: 14px;
+            max-width: 860px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 3px solid var(--secondary);
+            border-radius: var(--radius-lg);
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: var(--shadow-pop);
+            z-index: 90;
+        }
+        .mentor-container.mood-nudge { border-color: var(--nudge); background: #fffbeb; }
+        .mentor-container.mood-success { border-color: var(--success); background: #f0fdf4; }
+
+        .mentor-avatar-wrap {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: #ccfbf1;
+            border: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.9rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .mentor-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 16px;
+        }
+        .modal-backdrop.open { display: flex; }
+
+        .modal-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            max-width: 480px;
+            width: 100%;
+            padding: 24px;
+            box-shadow: var(--shadow-pop);
+            border: 3px solid var(--primary-light);
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 12px 0 18px 0;
+        }
+
+        .avatar-option {
+            height: 58px;
+            font-size: 1.9rem;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border-color);
+            background: #f8fafc;
+            cursor: pointer;
+        }
+        .avatar-option.selected {
+            border-color: var(--primary-light);
+            background: #dbeafe;
+        }
+
+        .input-field {
+            width: 100%;
+            min-height: var(--touch-min);
+            padding: 10px 14px;
+            font-family: var(--font-fa);
+            font-size: 1rem;
+            font-weight: bold;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+
+        table.telemetry-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.9rem;
+        }
+        table.telemetry-table th, table.telemetry-table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+            text-align: right;
+        }
+        table.telemetry-table th { background: #e2e8f0; }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== [HEADER / HUD BAR] ==================== -->
+    <header class="app-header">
+        <div class="brand-box">
+            <button class="btn btn-outline" onclick="AudioEngine.playClick(); Router.navigateTo('dashboard')">
+                🏠 نقشه آکادمی
+            </button>
+            <div class="student-badge" onclick="AudioEngine.playClick(); ProfileModal.open()">
+                <span id="hud-avatar" style="font-size: 1.45rem;">👩‍🔬</span>
+                <span id="hud-name">مهندس جوان</span>
+                <span style="font-size: 0.8rem;">✏️</span>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-pill">
+                <span>🌱 سطح گنبد:</span>
+                <span id="hud-dome-level">۱</span>
+            </div>
+            <div class="stat-pill">
+                <span>💎 کریستال:</span>
+                <span id="hud-crystals">۰</span>
+            </div>
+            <div class="stat-pill">
+                <span>⚡ تجربه:</span>
+                <span id="hud-xp">۰</span>
+            </div>
+            <button class="btn btn-outline" id="btn-sound" onclick="AppState.toggleSound()">🔊</button>
+            <button class="btn btn-outline" onclick="AudioEngine.playClick(); TeacherPanel.openAuth()">⚙️ معلم</button>
+        </div>
+    </header>
+
+    <!-- ==================== [MAIN SPA VIEWPORT] ==================== -->
+    <main class="app-main">
+
+        <!-- VIEW 1: DASHBOARD -->
+        <section id="view-dashboard" class="spa-view active">
+            <div class="dome-hero">
+                <div class="dome-info">
+                    <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 0.84rem; font-weight: bold; margin-bottom: 6px;">
+                        🚀 ماموریت مهندسی: احیای گنبد گیاه‌شناسی شهر
+                    </div>
+                    <h1 style="font-size: 1.45rem; margin-bottom: 6px;">آکادمی کوانتومی مهندسان کسر (فصل ۲ ریاضی ششم)</h1>
+                    <p style="font-size: 0.94rem; opacity: 0.92;">
+                        در هر ایستگاه، ابتدا وارد <b>«درسنامه و شبیه‌ساز تعاملی»</b> شو و سپس در <b>«۲ کارگاه بازی»</b> دستگاه‌ها را تعمیر کن تا گنبد سبز شهر شکوفا شود!
+                    </p>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="dome-progress-bar" style="width: 8%;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-top: 6px; font-weight: bold;">
+                        <span id="dome-progress-label">پیشرفت کل: ۰ از ۱۸ ستاره</span>
+                        <span>🌟 بدون محدودیت زمانی و استرس</span>
+                    </div>
+                </div>
+
+                <div class="dome-visual-box">
+                    <img src="bg_dome.png" alt="گنبد سبز انرژی" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display: none; text-align: center; padding: 10px;">
+                        <div id="dome-fallback-emojis" style="font-size: 2.2rem; letter-spacing: 4px;">🏛️🌱⚡</div>
+                        <div id="dome-fallback-caption" style="font-size: 0.84rem; font-weight: bold;">فاز ۱: راه‌اندازی هسته اولیه</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stations-grid" id="stations-grid-container"></div>
+        </section>
+
+        <!-- VIEW 2: INTERACTIVE LESSON SLIDES -->
+        <section id="view-lesson" class="spa-view">
+            <div class="card-surface">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 2px solid var(--bg-panel); padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                    <h2 id="lesson-title" style="color: var(--primary); font-size: 1.25rem;">📖 درسنامه تعاملی</h2>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-soft" onclick="AudioEngine.playClick(); Router.navigateTo('dashboard')">نقشه آکادمی ↩</button>
+                    </div>
+                </div>
+                <div id="lesson-content-area"></div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: MINI-GAME ARENA -->
+        <section id="view-game" class="spa-view">
+            <div class="card-surface">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 2px solid var(--bg-panel); padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h2 id="game-title" style="color: var(--secondary); font-size: 1.25rem;">🎮 کارگاه عملیاتی</h2>
+                        <div id="game-progress-sub" style="font-size: 0.88rem; color: var(--text-muted); font-weight: bold;"></div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-soft" onclick="AudioEngine.playClick(); Router.navigateTo('lesson', { moduleId: AppState.currentModule })">📖 مرور درسنامه</button>
+                        <button class="btn btn-soft" onclick="AudioEngine.playClick(); Router.navigateTo('dashboard')">نقشه آکادمی ↩</button>
+                    </div>
+                </div>
+                <div id="game-content-area"></div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: TEACHER DIAGNOSTIC PANEL -->
+        <section id="view-teacher" class="spa-view">
+            <div class="card-surface">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                    <h2 style="color: var(--primary);">👨‍🏫 داشبورد تشخیصی و تله‌متری معلم</h2>
+                    <button class="btn btn-soft" onclick="AudioEngine.playClick(); Router.navigateTo('dashboard')">بستن پنل ✖</button>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px;">
+                    <button class="btn btn-secondary" onclick="TeacherPanel.unlockAllStations()">🔓 باز کردن قفل و ستاره تمام ایستگاه‌ها (ویژه تدریس کلاسی)</button>
+                    <button class="btn btn-primary" onclick=" window.print()">🖨️ چاپ گزارش عملکرد دانش‌آموز</button>
+                    <button class="btn btn-accent" onclick="StorageEngine.resetAllData()">♻️ پاکسازی حافظه برای دانش‌آموز جدید</button>
+                </div>
+
+                <div id="teacher-summary-box" class="workbench-box"></div>
+
+                <h3 style="margin: 16px 0 8px 0; color: var(--primary);">📊 جدول تله‌متری بدفهمی‌های شناختی ثبت‌شده</h3>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">
+                    هر بار که دانش‌آموز دچار یکی از خطاهای رایج مفهومی شود، نوع بدفهمی و ورودی او در این جدول ثبت می‌گردد:
+                </p>
+                <div style="overflow-x: auto;">
+                    <table class="telemetry-table">
+                        <thead>
+                            <tr>
+                                <th>زمان</th>
+                                <th>ایستگاه</th>
+                                <th>نوع بدفهمی شناختی</th>
+                                <th>سوال</th>
+                                <th>پاسخ دانش‌آموز</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-telemetry-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== [PROFILE MODAL] ==================== -->
+    <div class="modal-backdrop" id="profile-modal">
+        <div class="modal-card">
+            <h3 style="color: var(--primary); margin-bottom: 8px;">🪪 کارت شناسایی مهندس ارشد</h3>
+            <label style="font-weight: bold; font-size: 0.92rem; display: block; margin-bottom: 6px;">نام دانش‌آموز:</label>
+            <input type="text" id="input-student-name" class="input-field" placeholder="مثلاً: محمدحسین" maxlength="28">
+            <label style="font-weight: bold; font-size: 0.92rem; display: block; margin-top: 14px;">انتخاب آواتار مهندسی:</label>
+            <div class="avatar-grid" id="avatar-selector-grid"></div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-soft" onclick="ProfileModal.close()">انصراف</button>
+                <button class="btn btn-primary" onclick="ProfileModal.save()">💾 ذخیره</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== [COGNITIVE MENTOR BUBBLE] ==================== -->
+    <aside class="mentor-container" id="mentor-bubble">
+        <div class="mentor-avatar-wrap">
+            <img src="mentor_farzaneh.png" alt="استاد فرزانه" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span style="display:none;">🧙‍♂️</span>
+        </div>
+        <div style="flex: 1;">
+            <div style="font-weight: bold; font-size: 0.88rem; color: var(--secondary);">استاد فرزانه (راهنمای شناختی آکادمی)</div>
+            <div id="mentor-message" style="font-size: 0.98rem; font-weight: 500;">
+                خوش آمدی مهندس جوان! از ایستگاه ۱ شروع کن تا قوانین کسرها را گام‌به‌گام کشف کنیم.
+            </div>
+        </div>
+    </aside>
+
+    <!-- ==========================================================================
+       [BLOCK 8: COMPLETE JAVASCRIPT ENGINE (AUDIO, STORAGE, 6 LESSONS, 12 GAMES)]
+       ========================================================================== -->
+    <script>
+        /* --------------------------------------------------------------------------
+           1. SYNTHESIZER AUDIO ENGINE (Web Audio API)
+           -------------------------------------------------------------------------- */
+        const AudioEngine = {
+            ctx: null,
+            initContext() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    if (AudioCtx) this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+            },
+            isMuted() { return !AppState.data || !AppState.data.settings.soundEnabled; },
+            playClick() {
+                if (this.isMuted()) return;
+                this.initContext(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(520, now);
+                osc.frequency.exponentialRampToValueAtTime(220, now + 0.045);
+                g.gain.setValueAtTime(0.16, now);
+                g.gain.linearRampToValueAtTime(0.01, now + 0.045);
+                osc.connect(g); g.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.05);
+            },
+            playSlice() {
+                if (this.isMuted()) return;
+                this.initContext(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(760, now);
+                osc.frequency.exponentialRampToValueAtTime(190, now + 0.09);
+                g.gain.setValueAtTime(0.2, now);
+                g.gain.linearRampToValueAtTime(0.01, now + 0.09);
+                osc.connect(g); g.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.095);
+            },
+            playSuccess() {
+                if (this.isMuted()) return;
+                this.initContext(); if (!this.ctx) return;
+                [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+                    const now = this.ctx.currentTime + i * 0.07;
+                    const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+                    osc.type = 'triangle'; osc.frequency.setValueAtTime(f, now);
+                    g.gain.setValueAtTime(0.2, now);
+                    g.gain.exponentialRampToValueAtTime(0.008, now + 0.22);
+                    osc.connect(g); g.connect(this.ctx.destination);
+                    osc.start(now); osc.stop(now + 0.23);
+                });
+            },
+            playGentleNudge() {
+                if (this.isMuted()) return;
+                this.initContext(); if (!this.ctx) return;
+                [350, 300].forEach((f, i) => {
+                    const now = this.ctx.currentTime + i * 0.11;
+                    const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(f, now);
+                    g.gain.setValueAtTime(0.15, now);
+                    g.gain.exponentialRampToValueAtTime(0.008, now + 0.18);
+                    osc.connect(g); g.connect(this.ctx.destination);
+                    osc.start(now); osc.stop(now + 0.19);
+                });
+            }
+        };
+
+        /* --------------------------------------------------------------------------
+           2. MATH & FRACTION UTILITIES (Fisher-Yates + Fraction Formatter)
+           -------------------------------------------------------------------------- */
+        const MathUtils = {
+            toPersianDigits(num) {
+                if (num === null || num === undefined) return '';
+                const d = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+                return num.toString().replace(/\d/g, x => d[x]);
+            },
+            toEnglishDigits(str) {
+                if (!str) return '';
+                return str.toString()
+                    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+                    .trim();
+            },
+            parseIntFa(val) {
+                const clean = this.toEnglishDigits(val);
+                const parsed = parseInt(clean, 10);
+                return isNaN(parsed) ? null : parsed;
+            },
+            gcd(a, b) {
+                a = Math.abs(a); b = Math.abs(b);
+                while (b) { let t = b; b = a % b; a = t; }
+                return a || 1;
+            },
+            lcm(a, b) {
+                return (!a || !b) ? 0 : Math.abs((a * b) / this.gcd(a, b));
+            },
+            shuffleDeck(arr) {
+                const copy = [...arr];
+                for (let i = copy.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [copy[i], copy[j]] = [copy[j], copy[i]];
+                }
+                return copy;
+            },
+            fracHTML(num, den, whole = null) {
+                if (den === 1 && !whole) {
+                    return `<span class="math-expr"><span class="mixed-whole">${this.toPersianDigits(num)}</span></span>`;
+                }
+                const wPart = (whole !== null && whole !== 0)
+                    ? `<span class="mixed-whole">${this.toPersianDigits(whole)}</span>`
+                    : '';
+                return `<span class="math-expr">${wPart}<span class="frac"><span class="frac-num">${this.toPersianDigits(num)}</span><span class="frac-den">${this.toPersianDigits(den)}</span></span></span>`;
+            }
+        };
+
+        /* --------------------------------------------------------------------------
+           3. METADATA FOR THE 6 STATIONS
+           -------------------------------------------------------------------------- */
+        const CURRICULUM_META = [
+            {
+                id: 'm1', num: 1,
+                title: 'مفهوم کسر، انواع کسر و عدد مخلوط',
+                desc: 'شرط مساوی بودن قسمت‌ها، تشخیص کسر کوچکتر، مساوی و بزرگتر از واحد، و تبدیل عدد مخلوط و کسر (صفحه ۲۴).',
+                img: 'station_crystal.png', emoji: '💎',
+                game1Name: 'کارگاه انواع کسر', game2Name: 'رآکتور تبدیل عدد مخلوط'
+            },
+            {
+                id: 'm2', num: 2,
+                title: 'کسرهای مساوی با شکل، ساده‌کردن و تساوی',
+                desc: 'ساخت کسر مساوی روی شکل، ساده‌کردن کسرها و پیدا کردن عدد مجهول در تساوی دو کسر (صفحات ۲۵، ۲۹ و ۳۰).',
+                img: 'station_microscope.png', emoji: '🔬',
+                game1Name: 'لنز میکروسکوپ شکل', game2Name: 'پلکان تساوی کسرها'
+            },
+            {
+                id: 'm3', num: 3,
+                title: 'مقایسه و مرتب‌سازی ۴ مرحله‌ای کسرها',
+                desc: 'مرتب‌سازی با ۴ گام: ۱) تبدیل به عدد مخلوط ۲) عدد صحیح ۳) مقایسه روی یک شکل واحد ۴) جایگذاری نهایی (صفحه ۲۷).',
+                img: 'station_conveyor.png', emoji: '🚂',
+                game1Name: 'خط سورتینگ ۴ مرحله‌ای', game2Name: 'ترازوی مقایسه کسرها'
+            },
+            {
+                id: 'm4', num: 4,
+                title: 'مخرج مشترک (ک.م.م) و جمع و تفریق',
+                desc: 'یافتن کوچک‌ترین مخرج مشترک با مضرب‌ها، جمع و تفریق کسرها و قرض گرفتن ۱ واحد کامل از عدد صحیح (صفحات ۲۴ تا ۲۷).',
+                img: 'station_gears.png', emoji: '🧪',
+                game1Name: 'قفل فرکانس مخرج مشترک', game2Name: 'بانک خُردکن واحد کامل'
+            },
+            {
+                id: 'm5', num: 5,
+                title: 'ضرب کسرها، ساده‌سازی متقاطع و معکوس',
+                desc: 'مفهوم ضرب روی شکل (هاشور متقاطع)، عدد معکوس (حاصل‌ضرب ۱) و ساده کردن صورت و مخرج قبل از ضرب (صفحات ۲۸ تا ۳۱).',
+                img: 'station_gears.png', emoji: '⚔️',
+                game1Name: 'مدار جفت‌های معکوس', game2Name: 'باشگاه برش متقاطع ضرب'
+            },
+            {
+                id: 'm6', num: 6,
+                title: 'تقسیم کسرها (شکل، هم‌مخرج و معکوس)',
+                desc: 'مفهوم «در ... چند تا ... است؟» با شکل، تقسیم با مخرج مشترک و تبدیل تقسیم به ضرب در معکوس کسر دوم (صفحات ۳۲ تا ۳۴).',
+                img: 'station_gears.png', emoji: '⚙️',
+                game1Name: 'کارخانه بسته‌بندی پسته', game2Name: 'چرخ‌دنده وارونه‌ساز تقسیم'
+            }
+        ];
+
+        /* --------------------------------------------------------------------------
+           4. PERSISTENT STORAGE ENGINE (localStorage)
+           -------------------------------------------------------------------------- */
+        const STORAGE_KEY = 'FractionAcademy_Save_v1';
+        const StorageEngine = {
+            getDefaultData() {
+                return {
+                    studentProfile: { name: 'مهندس جوان', avatar: '👩‍🔬', xp: 0, crystals: 0, domeLevel: 1 },
+                    settings: { soundEnabled: true },
+                    modules: {
+                        m1: { title: 'مفهوم، انواع کسر و عدد مخلوط', lessonCompleted: false, game1Score: 0, game2Score: 0, stars: 0 },
+                        m2: { title: 'کسرهای مساوی، ساده‌کردن و تساوی', lessonCompleted: false, game1Score: 0, game2Score: 0, stars: 0 },
+                        m3: { title: 'مقایسه و مرتب‌سازی ۴ مرحله‌ای', lessonCompleted: false, game1Score: 0, game2Score: 0, stars: 0 },
+                        m4: { title: 'مخرج مشترک و جمع و تفریق', lessonCompleted: false, game1Score: 0, game2Score: 0, stars: 0 },
+                        m5: { title: 'ضرب کسرها، ساده‌سازی و معکوس', lessonCompleted: false, game1Score: 0, game2Score: 0, stars: 0 },
+                        m6: { title: 'تقسیم کسرها (شکل، هم‌مخرج، معکوس)', lessonCompleted: false, game1Score: 0, game2Score: 0, stars: 0 }
+                    },
+                    telemetry: { totalAttempts: 0, misconceptionLogs: [] }
+                };
+            },
+            load() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) { const d = this.getDefaultData(); this.save(d); return d; }
+                    return JSON.parse(raw);
+                } catch (e) { return this.getDefaultData(); }
+            },
+            save(data) {
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+            },
+            logMisconception(moduleId, errorType, questionStr, studentInput) {
+                AppState.data.telemetry.totalAttempts++;
+                AppState.data.telemetry.misconceptionLogs.unshift({
+                    timestamp: new Date().toLocaleTimeString('fa-IR'),
+                    module: moduleId,
+                    errorType: errorType,
+                    question: questionStr,
+                    studentInput: studentInput
+                });
+                this.save(AppState.data);
+            },
+            resetAllData() {
+                if (confirm('آیا مطمئن هستید که می‌خواهید تمام اطلاعات را برای دانش‌آموز جدید پاک کنید؟')) {
+                    AppState.data = this.getDefaultData();
+                    this.save(AppState.data);
+                    AppState.syncHUD();
+                    DashboardUI.render();
+                    Router.navigateTo('dashboard');
+                }
+            }
+        };
+
+        /* --------------------------------------------------------------------------
+           5. APPLICATION STATE & MENTOR
+           -------------------------------------------------------------------------- */
+        const AppState = {
+            data: null,
+            currentModule: 'm1',
+            currentGame: 1,
+            init() {
+                this.data = StorageEngine.load();
+                this.syncHUD();
+                DashboardUI.render();
+            },
+            syncHUD() {
+                const p = this.data.studentProfile;
+                let totalStars = 0;
+                Object.values(this.data.modules).forEach(m => {
+                    m.stars = (m.lessonCompleted ? 1 : 0) + (m.game1Score > 0 ? 1 : 0) + (m.game2Score > 0 ? 1 : 0);
+                    totalStars += m.stars;
+                });
+                p.domeLevel = Math.min(6, 1 + Math.floor(totalStars / 3));
+                document.getElementById('hud-name').textContent = p.name;
+                document.getElementById('hud-avatar').textContent = p.avatar;
+                document.getElementById('hud-dome-level').textContent = MathUtils.toPersianDigits(p.domeLevel);
+                document.getElementById('hud-crystals').textContent = MathUtils.toPersianDigits(p.crystals);
+                document.getElementById('hud-xp').textContent = MathUtils.toPersianDigits(p.xp);
+                document.getElementById('btn-sound').textContent = this.data.settings.soundEnabled ? '🔊' : '🔇';
+            },
+            addReward(xpAmount, crystalAmount = 1) {
+                this.data.studentProfile.xp += xpAmount;
+                this.data.studentProfile.crystals += crystalAmount;
+                StorageEngine.save(this.data);
+                this.syncHUD();
+            },
+            toggleSound() {
+                this.data.settings.soundEnabled = !this.data.settings.soundEnabled;
+                StorageEngine.save(this.data);
+                this.syncHUD();
+            }
+        };
+
+        const Mentor = {
+            say(html, mood = 'normal') {
+                const b = document.getElementById('mentor-bubble');
+                b.classList.remove('mood-nudge', 'mood-success');
+                if (mood === 'nudge') b.classList.add('mood-nudge');
+                if (mood === 'success') b.classList.add('mood-success');
+                document.getElementById('mentor-message').innerHTML = html;
+            }
+        };
+
+        /* --------------------------------------------------------------------------
+           6. DASHBOARD & PROFILE MODAL
+           -------------------------------------------------------------------------- */
+        const DashboardUI = {
+            render() {
+                const mods = AppState.data.modules;
+                let totalStars = 0;
+                Object.values(mods).forEach(m => totalStars += (m.stars || 0));
+                const pct = Math.max(6, Math.round((totalStars / 18) * 100));
+                document.getElementById('dome-progress-bar').style.width = `${pct}%`;
+                document.getElementById('dome-progress-label').textContent =
+                    `پیشرفت کل: ${MathUtils.toPersianDigits(totalStars)} از ۱۸ ستاره (${MathUtils.toPersianDigits(pct)}٪)`;
+
+                const stages = [
+                    { e: '🏛️🌱⚡', t: 'فاز ۱: راه‌اندازی هسته اولیه گنبد' },
+                    { e: '🏛️🌿💧', t: 'فاز ۲: جریان یافتن لوله‌های آب و جوانه‌ها' },
+                    { e: '🏛️🌳🌸', t: 'فاز ۳: شکوفایی درختان و تنظیم کریستال‌ها' },
+                    { e: '🏛️🌳🌺🦋', t: 'فاز ۴: بازگشت پروانه‌ها و تعادل اکولوژیک' },
+                    { e: '🏛️🌲🌻🦜✨', t: 'فاز ۵: درخشش کامل شبکه کوانتومی گنبد' },
+                    { e: '🏆🏛️🌳🌈💎', t: 'فاز ۶: احیای ۱۰۰٪ گنبد سبز شهر!' }
+                ];
+                const st = stages[Math.min(5, Math.floor(totalStars / 3))];
+                document.getElementById('dome-fallback-emojis').textContent = st.e;
+                document.getElementById('dome-fallback-caption').textContent = st.t;
+
+                document.getElementById('stations-grid-container').innerHTML = CURRICULUM_META.map(meta => {
+                    const m = mods[meta.id];
+                    const stars = '⭐'.repeat(m.stars || 0) + '☆'.repeat(3 - (m.stars || 0));
+                    return `
+                        <article class="station-card">
+                            <div>
+                                <div class="station-header">
+                                    <div class="station-icon-box">
+                                        <img src="${meta.img}" alt="${meta.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                        <span style="display:none;">${meta.emoji}</span>
+                                    </div>
+                                    <div style="flex:1;">
+                                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                            <span class="station-num-tag">ایستگاه ${MathUtils.toPersianDigits(meta.num)}</span>
+                                            <span>${stars}</span>
+                                        </div>
+                                        <h3 style="font-size:1.08rem;">${meta.title}</h3>
+                                    </div>
+                                </div>
+                                <p class="station-desc">${meta.desc}</p>
+                                <div class="station-status-pills">
+                                    <span class="status-chip ${m.lessonCompleted ? 'done' : ''}">
+                                        ${m.lessonCompleted ? '✅ درسنامه کامل شد' : '📖 درسنامه'}
+                                    </span>
+                                    <span class="status-chip ${m.game1Score > 0 ? 'done' : ''}">
+                                        🎯 کارگاه ۱: ${MathUtils.toPersianDigits(m.game1Score)} امتیاز
+                                    </span>
+                                    <span class="status-chip ${m.game2Score > 0 ? 'done' : ''}">
+                                        ⚡ کارگاه ۲: ${MathUtils.toPersianDigits(m.game2Score)} امتیاز
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="station-actions">
+                                <button class="btn btn-primary" onclick="AudioEngine.playClick(); Router.navigateTo('lesson', { moduleId: '${meta.id}' })">
+                                    📖 درسنامه و شبیه‌ساز تعاملی
+                                </button>
+                                <div class="station-games-row">
+                                    <button class="btn btn-secondary" onclick="AudioEngine.playClick(); Router.navigateTo('game', { moduleId: '${meta.id}', gameId: 1 })">
+                                        🎮 ${meta.game1Name}
+                                    </button>
+                                    <button class="btn btn-accent" onclick="AudioEngine.playClick(); Router.navigateTo('game', { moduleId: '${meta.id}', gameId: 2 })">
+                                        ⚡ ${meta.game2Name}
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+            }
+        };
+
+        const ProfileModal = {
+            selectedAvatar: '👩‍🔬',
+            open() {
+                this.selectedAvatar = AppState.data.studentProfile.avatar || '👩‍🔬';
+                document.getElementById('input-student-name').value = AppState.data.studentProfile.name;
+                this.renderAvatars();
+                document.getElementById('profile-modal').classList.add('open');
+            },
+            close() { document.getElementById('profile-modal').classList.remove('open'); },
+            renderAvatars() {
+                const list = ['👩‍🔬', '👨‍🔬', '🧑‍🚀', '👷‍♀️', '👷‍♂️', '🧙‍♂️', '🤖', '🦸‍♂️'];
+                document.getElementById('avatar-selector-grid').innerHTML = list.map(a => `
+                    <button type="button" class="avatar-option ${a === this.selectedAvatar ? 'selected' : ''}"
+                        onclick="AudioEngine.playClick(); ProfileModal.selectedAvatar='${a}'; ProfileModal.renderAvatars();">${a}</button>
+                `).join('');
+            },
+            save() {
+                const v = document.getElementById('input-student-name').value.trim();
+                AppState.data.studentProfile.name = v || 'مهندس جوان';
+                AppState.data.studentProfile.avatar = this.selectedAvatar;
+                StorageEngine.save(AppState.data);
+                AppState.syncHUD();
+                AudioEngine.playSuccess();
+                this.close();
+            }
+        };
+
+        /* --------------------------------------------------------------------------
+           7. INTERACTIVE LESSON ENGINE (ALL 6 MODULES WITH MANIPULATIVES)
+           -------------------------------------------------------------------------- */
+        const LessonEngine = {
+            currentSlide: 0,
+            sliceDemoCount: 3,
+            zoomFactor: 1,
+
+            loadModuleLesson(moduleId) {
+                this.currentSlide = 0;
+                this.sliceDemoCount = 3;
+                this.zoomFactor = 1;
+                this.renderSlide();
+            },
+
+            getSlides(moduleId) {
+                const F = (n, d, w = null) => MathUtils.fracHTML(n, d, w);
+                const slidesMap = {
+                    m1: [
+                        {
+                            title: '۱. مفهوم کسر و شرط «مساوی بودن قسمت‌ها»',
+                            body: `
+                                <p>وقتی یک واحد کامل (مثلاً یک نان یا یک مستطیل) را به <b>قسمت‌های کاملاً مساوی</b> تقسیم کنیم، هر بخش نشان‌دهنده یک کسر است. اگر قسمت‌ها هم‌اندازه نباشند، نمی‌توانیم برای آن کسر بنویسیم!</p>
+                                <div class="workbench-box" style="text-align:center;">
+                                    <span class="step-badge">دست‌ورزی: تعداد برش‌های مساوی واحد را تغییر بده</span>
+                                    <div id="m1-interactive-bar" style="margin:12px auto; max-width:360px;"></div>
+                                    <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                                        <button class="btn btn-soft" onclick="LessonEngine.updateM1Bar(3)">تقسیم به ۳ بخش مساوی</button>
+                                        <button class="btn btn-soft" onclick="LessonEngine.updateM1Bar(4)">تقسیم به ۴ بخش مساوی</button>
+                                        <button class="btn btn-soft" onclick="LessonEngine.updateM1Bar(6)">تقسیم به ۶ بخش مساوی</button>
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            title: '۲. سه نوع کسر: کوچکتر از واحد، مساوی واحد و بزرگتر از واحد',
+                            body: `
+                                <ul style="padding-right:20px; margin-bottom:12px;">
+                                    <li><b>کسر کوچکتر از واحد (کمتر از ۱):</b> صورت از مخرج کوچکتر است؛ مثل ${F(3,4)} یا ${F(2,5)}.</li>
+                                    <li><b>کسر مساوی با واحد (برابر با ۱):</b> صورت و مخرج با هم برابرند؛ یعنی کلِ یک واحد رنگ شده است؛ مثل ${F(4,4)} = ۱ یا ${F(7,7)} = ۱.</li>
+                                    <li><b>کسر بزرگتر از واحد (بیشتر از ۱):</b> صورت از مخرج بزرگتر است؛ یعنی بیش از یک واحد کامل داریم و می‌توانیم آن را به صورت <b>عدد مخلوط</b> بنویسیم؛ مثل ${F(7,3)} = ${F(1,3,2)}.</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            title: '۳. تبدیل عدد مخلوط به کسر و برعکس (جدول صفحه ۲۴ کتاب)',
+                            body: `
+                                <p>در ردیف اول جدول صفحه ۲۴ کتاب، عدد مخلوط ${F(1,3,2)} را داریم. چون هر ۱ واحد کامل برابر با ${F(3,3)} است، پس ۲ واحد کامل می‌شود ۶ تا یک‌سوم (${F(6,3)}) و با ۱ سوم دیگر روی هم می‌شود ${F(7,3)}.</p>
+                                <div class="workbench-box">
+                                    <b>فرمول طلایی تبدیل عدد مخلوط به کسر:</b><br>
+                                    مخرج تغییر نمی‌کند؛ برای صورت داریم: <b>(عدد صحیح × مخرج) + صورت</b>.<br>
+                                    مثال: در ${F(1,2,5)} داریم: $(5 \\times 2) + 1 = 11$ پس برابر است با ${F(11,2)}.<br>
+                                    <b>تبدیل کسر بزرگتر از واحد به عدد مخلوط:</b> صورت را بر مخرج تقسیم می‌کنیم؛ خارج‌قسمت می‌شود «عدد صحیح» و باقی‌مانده می‌شود «صورتِ کسر».
+                                </div>
+                            `
+                        }
+                    ],
+                    m2: [
+                        {
+                            title: '۱. ساختن کسرهای مساوی روی شکل (صفحه ۲۵ کتاب)',
+                            body: `
+                                <p>اگر در کسری مانند ${F(3,4)}، هر کدام از قسمت‌های شکل را به ۲ یا ۳ قسمت مساوی دیگر تقسیم کنیم، مقدارِ رنگ‌شده تغییر نمی‌کند، اما تعداد کل خانه‌ها و خانه‌های رنگی چند برابر می‌شود:</p>
+                                <div class="workbench-box" style="text-align:center;">
+                                    <span class="step-badge">لنز بزرگنمایی را روی کسر ۳/۴ امتحان کن</span>
+                                    <div id="m2-zoom-box" style="margin:12px auto;"></div>
+                                    <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                                        <button class="btn btn-soft" onclick="LessonEngine.updateM2Zoom(1)">حالت پایه: ${F(3,4)}</button>
+                                        <button class="btn btn-soft" onclick="LessonEngine.updateM2Zoom(2)">ضرب در ۲: ${F(6,8)}</button>
+                                        <button class="btn btn-soft" onclick="LessonEngine.updateM2Zoom(3)">ضرب در ۳: ${F(9,12)}</button>
+                                    </div>
+                                </div>
+                            `
+                        },
+                        {
+                            title: '۲. ساده کردن کسرها (حذف خطوط اضافه شکل)',
+                            body: `
+                                <p>وقتی صورت و مخرج یک کسر را بر یک عدد مشترک (بزرگ‌ترین مقسوم‌علیه مشترک) تقسیم کنیم، کسر <b>ساده</b> می‌شود. مثلاً در ${F(18,24)}، هم ۱۸ و هم ۲۴ بر ۶ بخش‌پذیرند: ${F(18,24)} = ${F(3,4)}.</p>
+                            `
+                        },
+                        {
+                            title: '۳. پیدا کردن عدد مجهول در تساوی دو کسر (صفحه ۳۰ کتاب)',
+                            body: `
+                                <p>در تساوی ${F(2,3)} = ${F('؟',24)} (صفحه ۳۰ کتاب):</p>
+                                <div class="workbench-box">
+                                    <b>روش اول (ضریب برابری):</b> می‌پرسیم ۳ چند برابر شده تا به ۲۴ رسیده است؟ ($24 \\div 3 = 8$). پس صورت (۲) هم باید ۸ برابر شود: $2 \\times 8 = 16$.<br>
+                                    <b>روش دوم (رابطه کلی صفحه ۳۰):</b> در تساوی دو کسر، حاصل‌ضرب طرفین با هم برابر است؛ یا ابتدا کسر معلوم را ساده می‌کنیم (مثلاً در ${F(12,'؟')} = ${F(42,35)}، ابتدا ${F(42,35)} را بر ۷ ساده می‌کنیم تا شود ${F(6,5)}؛ حالا ۱۲ دو برابرِ ۶ است، پس جای خالی هم ۲ برابرِ ۵ یعنی ۱۰ است!).
+                                </div>
+                            `
+                        }
+                    ],
+                    m3: [
+                        {
+                            title: '۱. الگوریتم ۴ مرحله‌ای مرتب‌سازی کسرها (روش اختصاصی کلاس ما)',
+                            body: `
+                                <p>برای مرتب کردن مجموعه‌ای از کسرها و اعداد مخلوط (مانند تمرین ۲ صفحه ۲۷ کتاب: ${F(11,3)} ، ${F(1,5,3)} ، ${F(5,6)} ، ۱ ، ${F(18,4)} ، ۵) دقیقاً این ۴ گام را اجرا می‌کنیم:</p>
+                                <div class="workbench-box">
+                                    <b>گام ۱ (تبدیل به عدد مخلوط):</b> همه کسرهای بزرگتر از واحد را به عدد مخلوط تبدیل می‌کنیم: ${F(11,3)} = ${F(2,3,3)} و ${F(18,4)} = ${F(2,4,4)} = ${F(1,2,4)}.<br>
+                                    <b>گام ۲ (مقایسه عددهای صحیح):</b> اعداد را بر اساس قسمت صحیحشان دسته‌بندی می‌کنیم (کمتر از ۱، عدد ۱، عدد صحیح ۳، عدد صحیح ۴، عدد ۵).<br>
+                                    <b>گام ۳ (مقایسه روی یک شکل واحد):</b> اگر دو عدد دارای عدد صحیح برابر بودند (مثل ${F(2,3,3)} و ${F(1,5,3)})، کسرهایشان (${F(2,3)} و ${F(1,5)}) را روی <b>یک شکل واحد</b> مقایسه می‌کنیم.<br>
+                                    <b>گام ۴ (جایگذاری نهایی):</b> از چپ به راست از کوچک‌ترین به بزرگ‌ترین می‌چینیم.
+                                </div>
+                            `
+                        },
+                        {
+                            title: '۲. گام سوم در عمل: مقایسه دو کسر روی «یک شکل واحد»',
+                            body: `
+                                <p>چرا مقایسه روی یک شکل واحد بهترین روش شهودی است؟ فرض کنید می‌خواهیم ${F(1,2)} و ${F(2,3)} را مقایسه کنیم. یک مستطیل ۶ خانه‌ای می‌کشیم:</p>
+                                <div class="workbench-box" style="text-align:center;">
+                                    <p>نصف (${F(1,2)}) از ۶ خانه یعنی <b>۳ خانه</b>، اما دو-سوم (${F(2,3)}) از ۶ خانه یعنی <b>۴ خانه</b>! پس به سادگی می‌بینیم که ${F(1,2)} < ${F(2,3)}.</p>
+                                </div>
+                            `
+                        },
+                        {
+                            title: '۳. سه روش مقایسه دو کسر (تمرین ۸ صفحه ۲۷ کتاب)',
+                            body: `
+                                <p>در صفحه ۲۷ کتاب، دو کسر ${F(2,3)} و ${F(3,4)} را به ۳ روش مقایسه می‌کنیم:</p>
+                                <ul style="padding-right:20px;">
+                                    <li><b>الف) محور اعداد:</b> فاصله ۰ تا ۱ را به ۱۲ قسمت تقسیم می‌کنیم؛ ${F(2,3)} روی خانه هشتم (${F(8,12)}) و ${F(3,4)} روی خانه نهم (${F(9,12)}) قرار می‌گیرد.</li>
+                                    <li><b>ب) مخرج مشترک گرفتن:</b> کوچک‌ترین مخرج مشترک ۳ و ۴ عدد ۱۲ است: ${F(8,12)} < ${F(9,12)}.</li>
+                                    <li><b>پ) رسم شکل هم‌اندازه.</b></li>
+                                </ul>
+                            `
+                        }
+                    ],
+                    m4: [
+                        {
+                            title: '۱. چرا در جمع و تفریق کسرها باید مخرج‌ها برابر باشند؟ (صفحه ۲۵ و ۲۶)',
+                            body: `
+                                <p>مخرج هر کسر، <b>اندازه هر تکه</b> را نشان می‌دهد. وقتی ناهید ${F(3,4)} لیتر و ${F(5,6)} لیتر شیر نوشیده (صفحه ۲۵)، نمی‌توانیم صورت‌ها و مخرج‌ها را مستقیم با هم جمع کنیم! اول باید <b>کوچک‌ترین مضرب مشترک (ک.م.م)</b> مخرج‌ها را پیدا کنیم.</p>
+                                <div class="workbench-box">
+                                    مضرب‌های ۴: ۴، ۸، <b>۱۲</b>، ۱۶، ۲۰، ۲۴<br>
+                                    مضرب‌های ۶: ۶، <b>۱۲</b>، ۱۸، ۲۴<br>
+                                    کوچک‌ترین مخرج مشترک عدد <b>۱۲</b> است: ${F(3,4)} + ${F(5,6)} = ${F(9,12)} + ${F(10,12)} = ${F(19,12)} = ${F(7,12,1)}.
+                                </div>
+                            `
+                        },
+                        {
+                            title: '۲. تکنیک طلایی: تفریق عدد مخلوط از عدد صحیح (مانند صفحه ۲۷)',
+                            body: `
+                                <p>در تمرین ۱ صفحه ۲۷ عبارت $7 - 2\\frac{1}{5}$ آمده است. بچههایی که بدون فکر کردن می‌نویسند $5\\frac{1}{5}$ اشتباه می‌کنند! چون باید از ۷، هم ۲ واحد و هم $\\frac{1}{5}$ واحد کم کنیم:</p>
+                                <div class="workbench-box">
+                                    <b>روش شکستن ۱ واحد کامل:</b> از عدد ۷، یک واحد کامل قرض می‌گیریم و آن را به شکل کسری با مخرج ۵ (یعنی ${F(5,5)}) می‌نویسیم:<br>
+                                    $$7 = 6 + 1 = 6\\frac{5}{5}$$<br>
+                                    حالا به راحتی تفریق می‌کنیم: $6\\frac{5}{5} - 2\\frac{1}{5} = 4\\frac{4}{5}$.
+                                </div>
+                            `
+                        },
+                        {
+                            title: '۳. جمع و تفریق اعداد مخلوط (صفحه ۲۶ و ۲۷)',
+                            body: `
+                                <p>در جمع و تفریق اعداد مخلوط (مانند ${F(11,12,5)} - ${F(7,9,5)} در صفحه ۲۷)، ابتدا مخرج مشترک برای ۱۲ و ۹ پیدا می‌کنیم (عدد ۳۶):</p>
+                                <p>${F(33,36,5)} - ${F(28,36,5)} = ${F(5,36)} (چون ۵ منهای ۵ می‌شود صفر!). اگر در تفریق دو عدد مخلوط، کسر اول کوچکتر از کسر دوم بود، ابتدا عدد مخلوط را به کسر تبدیل می‌کنیم یا ۱ واحد از عدد صحیح قرض می‌گیریم.</p>
+                            `
+                        }
+                    ],
+                    m5: [
+                        {
+                            title: '۱. مفهوم ضرب دو کسر با هاشور متقاطع (جدول صفحه ۲۹)',
+                            body: `
+                                <p>ضرب ${F(3,5)} در ${F(2,3)} یعنی <b>«دو-سوم از سه-پنجمِ یک شکل»</b>. در جدول صفحه ۲۹، ابتدا ${F(3,5)} شکل را رنگ می‌کنیم و سپس ${F(2,3)} از همان قسمت رنگ‌شده را هاشور می‌زنیم.</p>
+                                <div class="workbench-box">
+                                    <b>قانون ضرب کسرها:</b> در ضرب کسرها اصلاً نیازی به مخرج مشترک نیست! صورت در صورت ضرب می‌شود و مخرج در مخرج. اگر عدد مخلوط داشتیم (مثل ${F(2,3,1)} \\times ${F(3,4,2)} در صفحه ۳۱)، <b>حتماً اول عدد مخلوط را به کسر تبدیل می‌کنیم</b>: ${F(5,3)} \\times ${F(11,4)} = ${F(55,12)}.
+                                </div>
+                            `
+                        },
+                        {
+                            title: '۲. عدد معکوس چیست؟ (صفحه ۲۸ و ۲۹ کتاب)',
+                            body: `
+                                <p>هرگاه حاصل‌ضرب دو عدد برابر <b>۱</b> شود، آن دو عدد را <b>معکوس یکدیگر</b> می‌نامیم. همه اعداد به جز صفر معکوس دارند!</p>
+                                <ul style="padding-right:20px;">
+                                    <li>معکوس کسر ${F(4,5)} می‌شود ${F(5,4)} چون ${F(4,5)} \\times ${F(5,4)} = ۱.</li>
+                                    <li>معکوس عدد طبیعی ۵ (که مخرجش ۱ است: ${F(5,1)}) می‌شود ${F(1,5)}.</li>
+                                    <li><b>نکته بسیار مهم:</b> برای پیدا کردن معکوس عدد مخلوط ${F(2,3,2)}، ابتدا آن را به کسر تبدیل می‌کنیم (${F(8,3)}) و بعد معکوس می‌کنیم که می‌شود ${F(3,8)}.</li>
+                                </ul>
+                            `
+                        },
+                        {
+                            title: '۳. ساده کردن متقاطع قبل از ضرب (صفحه ۳۰ کتاب)',
+                            body: `
+                                <p>در ضرب‌های بزرگ مثل ${F(14,63)} \\times ${F(72,16)} (تمرین ۱ صفحه ۳۰)، قبل از ضرب کردن، صورت‌ها را با مخرج‌ها ساده می‌کنیم:</p>
+                                <div class="workbench-box">
+                                    • عدد ۷۲ در صورت و ۶۳ در مخرج هر دو بر ۹ بخش‌پذیرند ($72 \\div 9 = 8$ و $63 \\div 9 = 7$).<br>
+                                    • عدد ۱۴ در صورت و ۷ جدید در مخرج بر ۷ ساده می‌شوند ($14 \\div 7 = 2$ و $7 \\div 7 = 1$).<br>
+                                    • حالا در نهایت عبارت بسیار ساده شده و پاسخ برابر با ۱ می‌شود!
+                                </div>
+                            `
+                        }
+                    ],
+                    m6: [
+                        {
+                            title: '۱. مفهوم اول تقسیم کسرها: در هر عدد چند تا کسر جا می‌شود؟ (صفحه ۳۲ و ۳۳)',
+                            body: `
+                                <p>در فعالیت پسته صفحه ۳۳ کتاب، می‌خواهیم بدانیم در ${F(1,2,4)} کیلوگرم پسته، چند بسته ${F(1,2)} کیلوگرمی یا چند بسته ${F(3,4)} کیلوگرمی جا می‌شود؟</p>
+                                <div class="workbench-box">
+                                    وقتی مخرج دو کسر برابر باشد (صفحه ۳۲)، کافی است صورت اول را بر صورت دوم تقسیم کنیم:<br>
+                                    مثلاً: ${F(18,5)} \\div ${F(6,5)} = \\frac{18}{6} = 3$.
+                                </div>
+                            `
+                        },
+                        {
+                            title: '۲. روش هم‌مخرج کردن در تقسیم کسرها (صفحه ۳۳ کتاب)',
+                            body: `
+                                <p>اگر مخرج دو کسر در تقسیم نابرابر باشد، یکی از روش‌ها این است که ابتدا مخرج مشترک بگیریم و بعد صورت اول را بر صورت دوم تقسیم کنیم:</p>
+                                <p>مثال صفحه ۳۳: ${F(6,5)} \\div ${F(2,3)} = ${F(18,15)} \\div ${F(10,15)} = \\frac{18}{10} = ${F(9,5)} = ${F(4,5,1)}.</p>
+                            `
+                        },
+                        {
+                            title: '۳. روش اصلی: تبدیل تقسیم به ضرب در معکوس کسر دوم (صفحه ۳۴ کتاب)',
+                            body: `
+                                <p>برای تقسیم دو کسر، کافی است <b>کسر اول را ثابت نگه داریم</b>، علامت تقسیم ($\\div$) را به ضرب ($\\times$) تبدیل کنیم و آن را در <b>معکوس کسر دوم</b> ضرب نماییم:</p>
+                                <div class="workbench-box">
+                                    • مثال ۱: ${F(18,5)} \\div ${F(2,3)} = ${F(18,5)} \\times ${F(3,2)} = ${F(27,5)}.<br>
+                                    • مثال ۲ (با عدد مخلوط - صفحه ۳۴): در ${F(3,8,4)} \\div ${F(3,4,1)}، ابتدا هر دو عدد مخلوط را به کسر تبدیل می‌کنیم (${F(35,8)} \\div ${F(7,4)}) و سپس کسر دوم را معکوس می‌کنیم: ${F(35,8)} \\times ${F(4,7)} = ${F(5,2)} = ${F(1,2,2)}.
+                                </div>
+                            `
+                        }
+                    ]
+                };
+                return slidesMap[moduleId] || slidesMap.m1;
+            },
+
+            renderSlide() {
+                const modId = AppState.currentModule;
+                const slides = this.getSlides(modId);
+                const s = slides[this.currentSlide];
+                const area = document.getElementById('lesson-content-area');
+
+                area.innerHTML = `
+                    <div style="margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                        <span class="step-badge">اسلاید ${MathUtils.toPersianDigits(this.currentSlide + 1)} از ${MathUtils.toPersianDigits(slides.length)}</span>
+                    </div>
+                    <h3 style="color:var(--primary); margin-bottom:12px; font-size:1.2rem;">${s.title}</h3>
+                    <div style="font-size:1.03rem;">${s.body}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:22px; padding-top:14px; border-top:2px solid var(--bg-panel); flex-wrap:wrap; gap:10px;">
+                        <button class="btn btn-soft" ${this.currentSlide === 0 ? 'disabled style="opacity:0.4;"' : ''}
+                            onclick="AudioEngine.playClick(); LessonEngine.currentSlide--; LessonEngine.renderSlide();">
+                            ➡ اسلاید قبلی
+                        </button>
+                        ${this.currentSlide < slides.length - 1
+                            ? `<button class="btn btn-primary" onclick="AudioEngine.playClick(); LessonEngine.currentSlide++; LessonEngine.renderSlide();">اسلاید بعدی ⬅</button>`
+                            : `<button class="btn btn-success" onclick="LessonEngine.completeLesson()">✅ یاد گرفتم! ثبت ستاره درسنامه و ورود به کارگاه ۱</button>`
+                        }
+                    </div>
+                `;
+
+                if (modId === 'm1' && this.currentSlide === 0) this.updateM1Bar(this.sliceDemoCount);
+                if (modId === 'm2' && this.currentSlide === 0) this.updateM2Zoom(this.zoomFactor);
+            },
+
+            updateM1Bar(parts) {
+                this.sliceDemoCount = parts;
+                AudioEngine.playSlice();
+                const el = document.getElementById('m1-interactive-bar');
+                if (!el) return;
+                let cells = '';
+                for (let i = 0; i < parts; i++) {
+                    cells += `<div class="unit-cell ${i < 2 ? 'filled' : ''}">۱/${MathUtils.toPersianDigits(parts)}</div>`;
+                }
+                el.innerHTML = `
+                    <div class="unit-bar" style="grid-template-columns: repeat(${parts}, 1fr); width:100%;">${cells}</div>
+                    <div style="margin-top:8px; font-weight:bold;">۲ قسمت از ${MathUtils.toPersianDigits(parts)} قسمت مساوی رنگی است: ${MathUtils.fracHTML(2, parts)}</div>
+                `;
+            },
+
+            updateM2Zoom(factor) {
+                this.zoomFactor = factor;
+                AudioEngine.playSlice();
+                const el = document.getElementById('m2-zoom-box');
+                if (!el) return;
+                const total = 4 * factor;
+                const filled = 3 * factor;
+                let cells = '';
+                for (let i = 0; i < total; i++) {
+                    cells += `<div class="unit-cell ${i < filled ? 'filled' : ''}"></div>`;
+                }
+                el.innerHTML = `
+                    <div class="unit-bar" style="grid-template-columns: repeat(${total}, 1fr); width:100%; max-width:380px;">${cells}</div>
+                    <div style="margin-top:8px; font-weight:bold;">کسر ساخته شده روی شکل: ${MathUtils.fracHTML(filled, total)}</div>
+                `;
+            },
+
+            completeLesson() {
+                const mod = AppState.data.modules[AppState.currentModule];
+                if (!mod.lessonCompleted) {
+                    mod.lessonCompleted = true;
+                    AppState.addReward(25, 1);
+                }
+                AudioEngine.playSuccess();
+                Mentor.say('آفرین مهندس! ستاره درسنامه این ایستگاه ثبت شد. حالا وارد کارگاه عملیاتی اول شدیم.', 'success');
+                Router.navigateTo('game', { moduleId: AppState.currentModule, gameId: 1 });
+            }
+        };
+
+        /* --------------------------------------------------------------------------
+           8. QUESTION DECKS & 12 MINI-GAMES ENGINE (FISHER-YATES + ANTI-SPOILER)
+           -------------------------------------------------------------------------- */
+        const GameEngine = {
+            deck: [],
+            currentIndex: 0,
+            sessionScore: 0,
+            tempState: {},
+
+            start(moduleId, gameId) {
+                this.sessionScore = 0;
+                this.currentIndex = 0;
+                this.deck = MathUtils.shuffleDeck(this.buildDeck(moduleId, gameId));
+                this.renderCurrentQuestion();
+            },
+
+            buildDeck(m, g) {
+                const F = (n, d, w = null) => MathUtils.fracHTML(n, d, w);
+                // مخزن جامع سوالات استخراج‌شده از کتاب ریاضی چهارم، پنجم و فصل ۲ ششم
+                if (m === 'm1' && g === 1) {
+                    return [
+                        { type: 'classify', n: 7, d: 3, ans: 'gt', label: F(7,3), hint: 'صورت (۷) از مخرج (۳) بزرگتر است، یعنی بیش از یک واحد کامل داریم (صفحه ۲۴).' },
+                        { type: 'classify', n: 3, d: 4, ans: 'lt', label: F(3,4), hint: 'صورت (۳) از مخرج (۴) کوچکتر است، پس به یک واحد کامل نرسیده است.' },
+                        { type: 'classify', n: 7, d: 7, ans: 'eq', label: F(7,7), hint: 'وقتی صورت و مخرج مساوی باشند، دقیقاً ۱ واحد کامل رنگ شده است.' },
+                        { type: 'classify', n: 11, d: 4, ans: 'gt', label: F(11,4), hint: '۱۱ چهارم از ۴ چهارم (یک واحد) بیشتر است.' },
+                        { type: 'classify', n: 5, d: 8, ans: 'lt', label: F(5,8), hint: '۵ قسمت از ۸ قسمت کمتر از یک واحد کامل است.' }
+                    ];
+                }
+                if (m === 'm1' && g === 2) {
+                    return [
+                        { mode: 'toFrac', w: 2, n: 1, d: 3, ansN: 7, ansD: 3, title: 'ردیف اول جدول صفحه ۲۴ کتاب: عدد مخلوط زیر را به کسر تبدیل کن' },
+                        { mode: 'toFrac', w: 1, n: 2, d: 3, ansN: 5, ansD: 3, title: 'ردیف سوم جدول صفحه ۲۴ کتاب: عدد مخلوط زیر را به کسر تبدیل کن' },
+                        { mode: 'toFrac', w: 5, n: 1, d: 2, ansN: 11, ansD: 2, title: 'ردیف پنجم جدول صفحه ۲۴ کتاب: عدد مخلوط زیر را به کسر تبدیل کن' },
+                        { mode: 'toMixed', n: 14, d: 5, ansW: 2, ansN: 4, ansD: 5, title: 'ردیف چهارم جدول صفحه ۲۴ کتاب: کسر زیر را به عدد مخلوط تبدیل کن' },
+                        { mode: 'toMixed', n: 19, d: 12, ansW: 1, ansN: 7, ansD: 12, title: 'فعالیت شیر صفحه ۲۵ کتاب: کسر زیر را به عدد مخلوط تبدیل کن' }
+                    ];
+                }
+                if (m === 'm2' && g === 1) {
+                    return [
+                        { baseN: 3, baseD: 4, mult: 3, ansN: 9, ansD: 12, op: '× ۳', text: 'فعالیت صفحه ۲۵ کتاب: اگر صورت و مخرج کسر ۳/۴ را در ۳ ضرب کنیم (هر خانه شکل ۳ قسمت شود)، چه کسری ساخته می‌شود؟' },
+                        { baseN: 5, baseD: 6, mult: 2, ansN: 10, ansD: 12, op: '× ۲', text: 'فعالیت صفحه ۲۵ کتاب: کسر مساوی ۵/۶ با ضریب ۲ را بنویس:' },
+                        { baseN: 18, baseD: 24, mult: 1, ansN: 3, ansD: 4, op: '÷ ۶ (ساده کردن)', text: 'کسر ۱۸/۲۴ را با تقسیم صورت و مخرج بر ۶ به ساده‌ترین شکل بنویس:' },
+                        { baseN: 42, baseD: 35, mult: 1, ansN: 6, ansD: 5, op: '÷ ۷ (ساده کردن)', text: 'کار در کلاس صفحه ۳۰ کتاب: کسر ۴۲/۳۵ را با تقسیم بر ۷ ساده کن:' }
+                    ];
+                }
+                if (m === 'm2' && g === 2) {
+                    return [
+                        { left: F(2,3), right: F('؟',24), ans: 16, wrongAdd: 23, qStr: '2/3 = ?/24', hint: 'در صفحه ۳۰ کتاب: مخرج ۳ در ۸ ضرب شده تا ۲۴ شود، پس صورت (۲) هم باید در ۸ ضرب شود (نه جمع!).' },
+                        { left: F('؟',12), right: F(5,6), ans: 10, wrongAdd: 11, qStr: '?/12 = 5/6', hint: 'مخرج ۶ دو برابر شده تا ۱۲ شود، پس ۵ هم دو برابر می‌شود.' },
+                        { left: F(10,12), right: F(15,'؟'), ans: 18, wrongAdd: 17, qStr: '10/12 = 15/?', hint: 'کار در کلاس ۱ صفحه ۳۰: ۱۰/۱۲ ساده شود ۵/۶ است؛ حالا ۵ سه برابر شده (۱۵)، پس ۶ هم سه برابر می‌شود (۱۸).' },
+                        { left: F(12,'؟'), right: F(42,35), ans: 10, wrongAdd: 5, qStr: '12/? = 42/35', hint: 'کار در کلاس ۲ صفحه ۳۰: ابتدا ۴۲/۳۵ را بر ۷ ساده کن (۶/۵)؛ حالا ۱۲ دو برابرِ ۶ است، پس مخرج هم ۲ برابرِ ۵ می‌شود!' }
+                    ];
+                }
+                if (m === 'm3' && g === 1) {
+                    // بازی اختصاصی ۴ مرحله‌ای مرتب‌سازی کسرها
+                    return [
+                        {
+                            title: 'مجموعه ۱ (تمرین ۲ صفحه ۲۷ کتاب ششم)',
+                            rawSet: `${F(11,3)} ، ${F(1,5,3)} ، ${F(5,6)} ، ۱ ، ${F(18,4)} ، ۵`,
+                            step1Q: `گام ۱ (تبدیل به عدد مخلوط): کسر بزرگتر از واحد ${F(11,3)} برابر با کدام عدد مخلوط است؟`,
+                            step1Opts: [
+                                { label: F(2,3,3), ok: true },
+                                { label: F(1,3,3), ok: false, err: '۱۱ تقسیم بر ۳ خارج‌قسمت ۳ و باقی‌مانده ۲ دارد.' },
+                                { label: F(3,2,2), ok: false, err: 'مخرج کسر تغییر نمی‌کند و همان ۳ می‌ماند!' }
+                            ],
+                            step2Q: `گام ۲ (مقایسه عدد صحیح): بین اعداد ${F(5,6)} ، ۱ ، ${F(2,3,3)} ، ${F(1,5,3)} ، ${F(2,4,4)} و ۵، کدام دو عدد دارای «عدد صحیح برابر» هستند و باید کسرهایشان را در گام سوم روی شکل مقایسه کنیم؟`,
+                            step2Opts: [
+                                { label: `${F(2,3,3)} و ${F(1,5,3)} (هر دو عدد صحیح ۳ دارند)`, ok: true },
+                                { label: `${F(5,6)} و ۵`, ok: false, err: '۵/۶ کوچکتر از یک است (عدد صحیحش صفر است) اما ۵ یک عدد صحیح کامل است.' },
+                                { label: `${F(2,3,3)} و ${F(2,4,4)}`, ok: false, err: 'عدد صحیح اولی ۳ و عدد صحیح دومی ۴ است، پس بدون رسم شکل مشخص است که ۴ بزرگتر است.' }
+                            ],
+                            step3Q: `گام ۳ (مقایسه کسرهای باقی‌مانده روی یک شکل واحد): حالا دو کسر ${F(1,5)} و ${F(2,3)} را روی شکل مقایسه کن. کدام‌یک کوچکتر است؟`,
+                            step3Opts: [
+                                { label: `${F(1,5)} کوچکتر از ${F(2,3)} است (پس ${F(1,5,3)} < ${F(2,3,3)})`, ok: true },
+                                { label: `${F(2,3)} کوچکتر از ${F(1,5)} است`, ok: false, err: 'دقت کن! در ۱/۵ فقط یک بخش کوچک از ۵ بخش رنگ شده، اما در ۲/۳ بیش از نصف شکل رنگ شده است.' }
+                            ],
+                            step4Q: `گام ۴ (جایگذاری نهایی از چپ به راست و کوچک به بزرگ): ترتیب نهایی درست کدام است؟`,
+                            step4Opts: [
+                                { label: `${F(5,6)} < ۱ < ${F(1,5,3)} < ${F(11,3)} < ${F(18,4)} < ۵`, ok: true },
+                                { label: `۱ < ${F(5,6)} < ${F(11,3)} < ${F(1,5,3)} < ${F(18,4)} < ۵`, ok: false, err: 'کسر ۵/۶ از ۱ کوچکتر است و باید اول بیاید، همچنین ۳ و ۱/۵ کوچکتر از ۱۱/۳ (۳ و ۲/۳) است.' }
+                            ]
+                        },
+                        {
+                            title: 'مجموعه ۲ (پیش‌نیاز منتخب چهارم و پنجم)',
+                            rawSet: `${F(9,2)} ، ${F(1,4,2)} ، ${F(2,3)} ، ۱ ، ${F(11,5)} ، ${F(1,2)}`,
+                            step1Q: `گام ۱ (تبدیل به عدد مخلوط): دو کسر بزرگتر از واحد ${F(9,2)} و ${F(11,5)} به ترتیب برابر با کدام اعداد مخلوط هستند؟`,
+                            step1Opts: [
+                                { label: `${F(1,2,4)} و ${F(1,5,2)}`, ok: true },
+                                { label: `${F(1,2,3)} و ${F(2,5,2)}`, ok: false, err: '۹ تقسیم بر ۲ می‌شود ۴ و باقی‌مانده ۱؛ ۱۱ تقسیم بر ۵ هم می‌شود ۲ و باقی‌مانده ۱.' }
+                            ],
+                            step2Q: `گام ۲ (مقایسه عدد صحیح): کدام عدد به دلیل داشتن بزرگ‌ترین عدد صحیح، قطعاً در آخرین جایگاه (بزرگ‌ترین عدد) قرار می‌گیرد؟`,
+                            step2Opts: [
+                                { label: `${F(9,2)} (چون برابر با ${F(1,2,4)} است و عدد صحیح ۴ دارد)`, ok: true },
+                                { label: `${F(11,5)} (چون صورتش ۱۱ است)`, ok: false, err: 'گول بزرگیِ صورت را نخور! ۱۱/۵ یعنی ۲ و ۱/۵، اما ۹/۲ یعنی ۴ و ۱/۲!' }
+                            ],
+                            step3Q: `گام ۳ (مقایسه روی یک شکل واحد): دو کسر کوچکتر از واحدِ ${F(1,2)} و ${F(2,3)} را روی یک شکل ۶ خانه‌ای مقایسه کن؛ و همچنین ${F(1,5,2)} و ${F(1,4,2)} را مقایسه کن:`,
+                            step3Opts: [
+                                { label: `${F(1,2)} < ${F(2,3)} و همچنین ${F(1,5,2)} < ${F(1,4,2)}`, ok: true },
+                                { label: `${F(1,4,2)} < ${F(1,5,2)} (چون ۴ کوچکتر از ۵ است)`, ok: false, err: 'هرچه یک واحد را به قسمت‌های بیشتری تقسیم کنیم، هر تکه کوچکتر می‌شود! پس ۱/۵ از ۱/۴ کوچکتر است.' }
+                            ],
+                            step4Q: `گام ۴ (جایگذاری نهایی از کوچک به بزرگ): ترتیب درست نهایی کدام است؟`,
+                            step4Opts: [
+                                { label: `${F(1,2)} < ${F(2,3)} < ۱ < ${F(11,5)} < ${F(1,4,2)} < ${F(9,2)}`, ok: true },
+                                { label: `${F(2,3)} < ${F(1,2)} < ۱ < ${F(1,4,2)} < ${F(11,5)} < ${F(9,2)}`, ok: false, err: 'به گام سوم دقت کن: ۱/۲ کوچکتر از ۲/۳ است و ۱۱/۵ (۲ و ۱/۵) کوچکتر از ۲ و ۱/۴ است.' }
+                            ]
+                        }
+                    ];
+                }
+                if (m === 'm3' && g === 2) {
+                    return [
+                        { a: F(2,3), b: F(3,4), ans: '<', text: 'تمرین ۸ صفحه ۲۷ کتاب: رابطه بین دو کسر زیر چیست؟ (با مخرج مشترک ۱۲ مقایسه کن)' },
+                        { a: F(3,4), b: F(5,6), ans: '<', text: 'فعالیت صفحه ۲۵: کدام کسر بزرگتر است؟ (مخرج مشترک ۱۲: ۹/۱۲ و ۱۰/۱۲)' },
+                        { a: F(11,3), b: F(18,4), ans: '<', text: 'تمرین ۲ صفحه ۲۷: ابتدا به عدد مخلوط تبدیل کن (۳ و ۲/۳ در برابر ۴ و ۲/۴) و مقایسه کن:' },
+                        { a: F(6,8), b: F(3,4), ans: '=', text: 'مقایسه کن: ۶/۸ و ۳/۴ چه رابطه‌ای با هم دارند؟' }
+                    ];
+                }
+                if (m === 'm4' && g === 1) {
+                    return [
+                        { q: `${F(3,4)} + ${F(5,6)}`, lcm: 12, ansN: 19, ansD: 12, d1: 4, d2: 6, sumN: 8, sumD: 10, text: 'مسئله شیر ناهید (صفحه ۲۵): ابتدا کوچک‌ترین مخرج مشترک ۴ و ۶ را بنویس و سپس حاصل جمع را به صورت کسر بنویس:' },
+                        { q: `${F(5,18)} + ${F(1,12)}`, lcm: 36, ansN: 13, ansD: 36, d1: 18, d2: 12, sumN: 6, sumD: 30, text: 'کار در کلاس ۱ صفحه ۲۶ کتاب: کوچک‌ترین مخرج مشترک ۱۸ و ۱۲ و حاصل جمع را بنویس:' },
+                        { q: `${F(9,15)} - ${F(3,10)}`, lcm: 30, ansN: 9, ansD: 30, d1: 15, d2: 10, sumN: 6, sumD: 5, text: 'کار در کلاس ۱ صفحه ۲۶ کتاب: کوچک‌ترین مخرج مشترک ۱۵ و ۱۰ (عدد ۳۰) و حاصل تفریق را بنویس:' },
+                        { q: `${F(8,9)} - ${F(1,3)}`, lcm: 9, ansN: 5, ansD: 9, d1: 9, d2: 3, sumN: 7, sumD: 6, text: 'تمرین ۱ صفحه ۲۷ کتاب: کوچک‌ترین مخرج مشترک ۹ و ۳ و حاصل تفریق را بنویس:' }
+                    ];
+                }
+                if (m === 'm4' && g === 2) {
+                    return [
+                        { q: `۷ - ${F(1,5,2)}`, ansW: 4, ansN: 4, ansD: 5, trapW: 5, trapN: 1, text: 'تمرین ۱ صفحه ۲۷ کتاب: یک واحد از ۷ قرض بگیر (تبدیل به ۶ و ۵/۵ کن) و تفریق را انجام بده:' },
+                        { q: `${F(2,9,5)} - ۱`, ansW: 4, ansN: 2, ansD: 9, trapW: 5, trapN: 1, text: 'فعالیت ۳ صفحه ۲۴ کتاب: حاصل تفریق عدد مخلوط از عدد صحیح را بنویس:' },
+                        { q: `${F(11,12,5)} - ${F(7,9,5)}`, ansW: 0, ansN: 5, ansD: 36, trapW: 0, trapN: 4, text: 'تمرین ۱ صفحه ۲۷ کتاب: مخرج مشترک ۱۲ و ۹ عدد ۳۶ است (عدد صحیح صفر می‌شود):' },
+                        { q: `${F(3,4,2)} + ${F(5,6,1)}`, ansW: 4, ansN: 7, ansD: 12, trapW: 3, trapN: 8, text: 'کار در کلاس ۲ صفحه ۲۶ کتاب: حاصل جمع دو عدد مخلوط را به صورت عدد مخلوط با مخرج ۱۲ بنویس:' }
+                    ];
+                }
+                if (m === 'm5' && g === 1) {
+                    return [
+                        { target: F(4,5), ans: F(5,4), raw: '4/5', opts: [ {l: F(5,4), ok:true}, {l: F(4,5), ok:false, e:'معکوس یعنی جای صورت و مخرج عوض شود تا حاصل‌ضرب ۱ شود.'}, {l: F(1,5), ok:false, e:'صورت باید به مخرج برود و مخرج به صورت.'} ] },
+                        { target: F(2,3,2), ans: F(3,8), raw: '2 2/3', opts: [ {l: F(3,8), ok:true}, {l: F(3,2,2), ok:false, e:'خطای رایج! قبل از معکوس کردن عدد مخلوط، حتماً اول آن را به کسر تبدیل کن (۲ و ۲/۳ می‌شود ۸/۳ و معکوسش ۳/۸ است).'}, {l: F(8,3), ok:false, e:'۸/۳ خودِ عدد است، معکوس آن ۳/۸ می‌شود.'} ] },
+                        { target: '۵', ans: F(1,5), raw: '5', opts: [ {l: F(1,5), ok:true}, {l: F(5,1), ok:false, e:'۵/۱ همان ۵ است! معکوس آن ۱/۵ می‌شود تا ۵ ضربدر ۱/۵ بشود ۱.'}, {l: '۰', ok:false, e:'صفر اصلاً معکوس ندارد!'} ] },
+                        { target: F(1,8), ans: '۸', raw: '1/8', opts: [ {l: '۸', ok:true}, {l: F(1,8), ok:false, e:'معکوس ۱/۸ برابر با ۸/۱ یا همان ۸ است.'}, {l: F(8,8), ok:false, e:'۸/۸ برابر با ۱ است، اما معکوس ۱/۸ عدد ۸ است.'} ] }
+                    ];
+                }
+                if (m === 'm5' && g === 2) {
+                    return [
+                        { q: `${F(3,4)} × ${F(7,8)}`, ansN: 21, ansD: 32, text: 'کار در کلاس صفحه ۲۸ کتاب: صورت در صورت و مخرج در مخرج ضرب کن:' },
+                        { q: `${F(2,3,2)} × ${F(6,5)}`, ansN: 16, ansD: 5, text: 'کار در کلاس صفحه ۲۸ کتاب: ابتدا ۲ و ۲/۳ را به کسر تبدیل کن (۸/۳)، سپس ۶ و ۳ را ساده کن و پاسخ را به صورت کسر بنویس:' },
+                        { q: `${F(2,3,1)} × ${F(3,4,2)}`, ansN: 55, ansD: 12, text: 'تمرین ۱۰ صفحه ۳۱ کتاب: هر دو عدد مخلوط را به کسر تبدیل کن (۵/۳ × ۱۱/۴) و حاصل را بنویس:' },
+                        { q: `${F(14,63)} × ${F(72,16)}`, ansN: 1, ansD: 1, text: 'تمرین ۱ صفحه ۳۰ کتاب: با ساده کردن متقاطع (۷۲ با ۶۳ بر ۹، و ۱۴ با ۱۶)، ساده‌ترین پاسخ کسری (۱/۱) را بنویس:' }
+                    ];
+                }
+                if (m === 'm6' && g === 1) {
+                    return [
+                        { q: `${F(1,2,4)} ÷ ${F(1,2)}`, ans: 9, text: 'فعالیت الف صفحه ۳۳ (بسته‌بندی پسته): اگر ۴ و ۱/۲ کیلوگرم پسته را در بسته‌های ۱/۲ کیلوگرمی بریزیم، چند بسته می‌شود؟' },
+                        { q: `${F(1,2,4)} ÷ ${F(3,4)}`, ans: 6, text: 'فعالیت ب صفحه ۳۳ کتاب: اگر همان ۴ و ۱/۲ کیلوگرم (۹/۲ یا ۱۸/۴) را در بسته‌های ۳/۴ کیلوگرمی بریزیم، چند بسته می‌شود؟' },
+                        { q: `${F(18,5)} ÷ ${F(6,5)}`, ans: 3, text: 'کار در کلاس صفحه ۳۲ کتاب: مخرج‌ها برابرند؛ در ۱۸ پنجم چند تا ۶ پنجم وجود دارد؟' },
+                        { q: `${F(20,17)} ÷ ${F(10,17)}`, ans: 2, text: 'کار در کلاس صفحه ۳۲ کتاب: حاصل تقسیم دو کسر هم‌مخرج زیر چند است؟' }
+                    ];
+                }
+                if (m === 'm6' && g === 2) {
+                    return [
+                        { q: `${F(18,5)} ÷ ${F(2,3)}`, revN: 3, revD: 2, ansN: 27, ansD: 5, text: 'کار در کلاس صفحه ۳۴ کتاب: ابتدا معکوس کسر دوم (۲/۳) را بنویس و سپس پس از ساده کردن ۱۸ با ۲، پاسخ نهایی را به دست آور:' },
+                        { q: `${F(3,4)} ÷ ${F(5,4)}`, revN: 4, revD: 5, ansN: 3, ansD: 5, text: 'کار در کلاس صفحه ۳۴ کتاب: کسر دوم را معکوس کن و پس از ساده کردن ۴ با ۴، حاصل را بنویس:' },
+                        { q: `${F(3,8,4)} ÷ ${F(3,4,1)}`, revN: 4, revD: 7, ansN: 5, ansD: 2, text: 'کار در کلاس صفحه ۳۴ کتاب: ابتدا به کسر تبدیل کن (۳۵/۸ ÷ ۷/۴)، سپس معکوسِ ۷/۴ و حاصل نهایی (ساده‌شده) را بنویس:' },
+                        { q: `${F(3,8)} ÷ ${F(9,4)}`, revN: 4, revD: 9, ansN: 1, ansD: 6, text: 'کار در کلاس صفحه ۳۴ کتاب: معکوس کسر دوم و حاصل نهایی (ساده‌شده) را بنویس:' }
+                    ];
+                }
+                return [];
+            },
+
+            renderCurrentQuestion() {
+                const modId = AppState.currentModule;
+                const gId = AppState.currentGame;
+                const area = document.getElementById('game-content-area');
+                const sub = document.getElementById('game-progress-sub');
+
+                if (this.currentIndex >= this.deck.length) {
+                    this.finishGameSession();
+                    return;
+                }
+
+                const item = this.deck[this.currentIndex];
+                sub.textContent = `مرحله ${MathUtils.toPersianDigits(this.currentIndex + 1)} از ${MathUtils.toPersianDigits(this.deck.length)} | امتیاز این کارگاه: ${MathUtils.toPersianDigits(this.sessionScore)}`;
+
+                // رندر اختصاصی بر اساس ایستگاه و شماره بازی
+                if (modId === 'm1' && gId === 1) {
+                    area.innerHTML = `
+                        <div class="workbench-box" style="text-align:center;">
+                            <p style="font-size:1.1rem; margin-bottom:12px;">کسر روبه‌رو در کدام دسته قرار می‌گیرد؟</p>
+                            <div style="transform:scale(1.35); margin:18px 0;">${item.label}</div>
+                            <div class="options-grid">
+                                <button class="option-card-btn" onclick="GameEngine.checkM1G1('lt')">📉 کوچکتر از واحد (کمتر از ۱)</button>
+                                <button class="option-card-btn" onclick="GameEngine.checkM1G1('eq')">⚖️ مساوی با واحد (برابر با ۱)</button>
+                                <button class="option-card-btn" onclick="GameEngine.checkM1G1('gt')">📈 بزرگتر از واحد (بیشتر از ۱)</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (modId === 'm1' && gId === 2) {
+                    if (item.mode === 'toFrac') {
+                        this.tempState = { broken: false };
+                        area.innerHTML = `
+                            <div class="workbench-box" style="text-align:center;">
+                                <h3 style="margin-bottom:10px;">${item.title}</h3>
+                                <div style="margin:12px 0;">عدد مخلوط: ${MathUtils.fracHTML(item.n, item.d, item.w)}</div>
+                                <p style="font-size:0.92rem; color:var(--text-muted); margin-bottom:10px;">
+                                    می‌توانی روی دکمه «شکافت واحد» کلیک کنی تا هر واحد کامل به قسمت‌های ${MathUtils.fracHTML(1, item.d)} شکسته شود (شمارش بر عهده خودت است!):
+                                </p>
+                                <button class="btn btn-soft" onclick="GameEngine.showFissionVisual(${item.w}, ${item.n}, ${item.d})">💎 شکستن واحدهای کامل روی شکل</button>
+                                <div id="fission-visual-slot" class="visual-unit-row"></div>
+                                <div style="margin-top:16px;">
+                                    <span style="font-weight:bold; margin-left:10px;">پاسخ کسری شما:</span>
+                                    <div class="frac-input-group">
+                                        <div class="frac">
+                                            <input type="text" id="inp-n" class="math-num-input" placeholder="صورت">
+                                            <div style="height:3px; background:#0f172a; width:100%; margin:4px 0;"></div>
+                                            <input type="text" id="inp-d" class="math-num-input" placeholder="مخرج">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-top:16px;">
+                                    <button class="btn btn-primary" onclick="GameEngine.checkM1G2()">⚡ بررسی و ثبت پاسخ</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        area.innerHTML = `
+                            <div class="workbench-box" style="text-align:center;">
+                                <h3 style="margin-bottom:10px;">${item.title}</h3>
+                                <div style="margin:12px 0;">کسر بزرگتر از واحد: ${MathUtils.fracHTML(item.n, item.d)}</div>
+                                <div style="margin-top:16px;">
+                                    <span style="font-weight:bold; margin-left:10px;">عدد مخلوط معادل:</span>
+                                    <div class="frac-input-group">
+                                        <input type="text" id="inp-w" class="math-num-input" placeholder="صحیح">
+                                        <div class="frac">
+                                            <input type="text" id="inp-n" class="math-num-input" placeholder="صورت">
+                                            <div style="height:3px; background:#0f172a; width:100%; margin:4px 0;"></div>
+                                            <input type="text" id="inp-d" class="math-num-input" placeholder="مخرج">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-top:16px;">
+                                    <button class="btn btn-primary" onclick="GameEngine.checkM1G2()">⚡ بررسی و ثبت پاسخ</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else if (modId === 'm2' && gId === 1) {
+                    area.innerHTML = `
+                        <div class="workbench-box" style="text-align:center;">
+                            <p style="font-size:1.05rem; font-weight:bold; margin-bottom:12px;">${item.text}</p>
+                            <div style="margin:12px 0;">
+                                کسر اولیه: ${MathUtils.fracHTML(item.baseN, item.baseD)}
+                                <span style="background:#fef3c7; padding:4px 12px; border-radius:10px; font-weight:bold; border:1px solid #f59e0b;">عملیات لنز: ${item.op}</span>
+                            </div>
+                            <div class="frac-input-group" style="margin-top:10px;">
+                                <div class="frac">
+                                    <input type="text" id="inp-n" class="math-num-input" placeholder="صورت">
+                                    <div style="height:3px; background:#0f172a; width:100%; margin:4px 0;"></div>
+                                    <input type="text" id="inp-d" class="math-num-input" placeholder="مخرج">
+                                </div>
+                            </div>
+                            <div style="margin-top:16px;">
+                                <button class="btn btn-primary" onclick="GameEngine.checkM2G1()">🔬 تنظیم فوکوس میکروسکوپ</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (modId === 'm2' && gId === 2) {
+                    area.innerHTML = `
+                        <div class="workbench-box" style="text-align:center;">
+                            <p style="font-size:1.05rem; font-weight:bold; margin-bottom:12px;">در تساوی زیر، چه عددی باید به جای علامت سؤال قرار بگیرد؟ (صفحه ۳۰ کتاب)</p>
+                            <div style="font-size:1.4rem; margin:16px 0; direction:ltr;">
+                                ${item.left} <b> = </b> ${item.right}
+                            </div>
+                            <div>
+                                <input type="text" id="inp-eq" class="math-num-input" style="width:110px;" placeholder="عدد ؟">
+                            </div>
+                            <div style="margin-top:16px;">
+                                <button class="btn btn-primary" onclick="GameEngine.checkM2G2()">⚙️ چرخش چرخ‌دنده تساوی</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (modId === 'm3' && gId === 1) {
+                    if (!this.tempState.subStep) this.tempState.subStep = 1;
+                    this.renderM3G1Step();
+                } else if (modId === 'm3' && gId === 2) {
+                    area.innerHTML = `
+                        <div class="workbench-box" style="text-align:center;">
+                            <p style="font-size:1.05rem; font-weight:bold; margin-bottom:14px;">${item.text}</p>
+                            <div style="display:flex; justify-content:center; align-items:center; gap:18px; direction:ltr; margin:18px 0;">
+                                <div style="transform:scale(1.25);">${item.a}</div>
+                                <div style="width:56px; height:56px; border:2px dashed var(--primary); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:bold;">؟</div>
+                                <div style="transform:scale(1.25);">${item.b}</div>
+                            </div>
+                            <div style="display:flex; justify-content:center; gap:12px; direction:ltr;">
+                                <button class="btn btn-secondary" style="font-size:1.4rem; min-width:80px;" onclick="GameEngine.checkM3G2('<')">&lt;</button>
+                                <button class="btn btn-secondary" style="font-size:1.4rem; min-width:80px;" onclick="GameEngine.checkM3G2('=')">=</button>
+                                <button class="btn btn-secondary" style="font-size:1.4rem; min-width:80px;" onclick="GameEngine.checkM3G2('>')">&gt;</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (modId === 'm4' && gId === 1) {
+                    area.innerHTML = `
+                        <div class="workbench-box" style="text-align:center;">
+                            <p style="font-size:1.03rem; font-weight:bold; margin-bottom:12px;">${item.text}</p>
+                            <div style="direction:ltr; font-size:1.3rem; margin:12px 0;">${item.q} = ?</div>
+                            <div style="margin:12px 0;">
+                                <label style="font-weight:bold;">گام اول — کوچک‌ترین مخرج مشترک (ک.م.م):</label>
+                                <input type="text" id="inp-lcm" class="math-num-input" style="width:90px; margin-right:8px;" placeholder="ک.م.م">
+                            </div>
+                            <div style="margin:14px 0;">
+                                <label style="font-weight:bold; margin-left:10px;">گام دوم — حاصل نهایی:</label>
+                                <div class="frac-input-group">
+                                    <div class="frac">
+                                        <input type="text" id="inp-n" class="math-num-input" placeholder="صورت">
+                                        <div style="height:3px; background:#0f172a; width:100%; margin:4px 0;"></div>
+                                        <input type="text" id="inp-d" class="math-num-input" placeholder="مخرج">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="GameEngine.checkM4G1()">🧪 باز کردن شیر فرکانس مشترک</button>
+                        </div>
+                    `;
+                } else if (modId === 'm4' && gId === 2) {
+                    area.innerHTML = `
+                        <div class="workbench-box" style="text-align:center;">
+                            <p style="font-size:1.03rem; font-weight:bold; margin-bottom:12px;">${item.text}</p>
+                            <div style="font-size:1.35rem; margin:14px 0;">${item.q}</div>
+                            <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:12px;">(اگر عدد صحیح در پاسخ وجود ندارد، کادر عدد صحیح را ۰ بگذار)</p>
+                            <div class="frac-input-group">
+                                <input type="text" id="inp-w" class="math-num-input" placeholder="صحیح">
+                                <div class="frac">
+                                    <input type="text" id="inp-n" class="math-num-input" placeholder="صورت">
+                                    <div style="height:3px; background:#0f172a; width:100%; margin:4px 0;"></div>
+                                    <input type="text" id="inp-d" class="math-num-input" placeholder="مخرج">
+                                </div>
+                            </div>
+                            <div style="margin-top:16px;">
+                                <button class="btn btn-primary" onclick="GameEngine.checkM4G2()">⚡ ثبت پاسخ در بانک واحد</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (modId === 'm5' && gId === 1) {
+                    area.innerHTML = `
+                        <div class="workbench-box" style="text-align:center;">
+                            <p style="font-size:1.05rem; font-weight:bold; margin-bottom:12px;">در جدول صفحه ۲۸ و ۲۹ کتاب، کدام گزینه «معکوس» عدد زیر است (تا حاصل‌ضربشان ۱ شود)؟</p>
+                            <div style="transform:scale(1.3); margin:18px 0;">${item.target}</div>
+                            <div class="options-grid">
+                                ${item.opts.map((o, idx) => `
+                                    <button class="option-card-btn" onclick="GameEngine.checkM5G1(${idx})">${o.l}</button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                } else if (modId === 'm5' && gId === 2) {
+                    area.innerHTML = `
+                        <div class="workbench-box" style="text-align:center;">
+                            <p style="font-size:1.03rem; font-weight:bold; margin-bottom:12px;">${item.text}</p>
+                            <div style="direction:ltr; font-size:1.35rem; margin:14px 0;">${item.q} = ?</div>
+                            <div class="frac-input-group">
+                                <div class="frac">
+                                    <input type="text" id="inp-n" class="math-num-input" placeholder="صورت">
+                                    <div style="height:3px; background:#0f172a; width:100%; margin:4px 0;"></div>
+                                    <input type="text" id="inp-d" class="math-num-input" placeholder="مخرج">
+                                </div>
+                            </div>
+                            <div style="margin-top:16px;">
+                                <button class="btn btn-primary" onclick="GameEngine.checkM5G2()">⚔️ اجرای برش و ثبت ضرب</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (modId === 'm6' && gId === 1) {
+                    area.innerHTML = `
+                        <div class="workbench-box" style="text-align:center;">
+                            <p style="font-size:1.03rem; font-weight:bold; margin-bottom:12px;">${item.text}</p>
+                            <div style="direction:ltr; font-size:1.35rem; margin:14px 0;">${item.q} = ?</div>
+                            <div>
+                                <input type="text" id="inp-pack" class="math-num-input" style="width:120px;" placeholder="تعداد بسته">
+                            </div>
+                            <div style="margin-top:16px;">
+                                <button class="btn btn-primary" onclick="GameEngine.checkM6G1()">📦 بسته‌بندی و ثبت</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (modId === 'm6' && gId === 2) {
+                    area.innerHTML = `
+                        <div class="workbench-box" style="text-align:center;">
+                            <p style="font-size:1.03rem; font-weight:bold; margin-bottom:12px;">${item.text}</p>
+                            <div style="direction:ltr; font-size:1.35rem; margin:12px 0;">${item.q}</div>
+                            <div style="margin:12px 0;">
+                                <span style="font-weight:bold; margin-left:8px;">گام ۱ — معکوسِ کسر دوم:</span>
+                                <div class="frac-input-group">
+                                    <div class="frac">
+                                        <input type="text" id="inp-rn" class="math-num-input" placeholder="صورت">
+                                        <div style="height:3px; background:#0f172a; width:100%; margin:4px 0;"></div>
+                                        <input type="text" id="inp-rd" class="math-num-input" placeholder="مخرج">
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin:12px 0;">
+                                <span style="font-weight:bold; margin-left:8px;">گام ۲ — پاسخ نهایی تقسیم (کسر ساده‌شده):</span>
+                                <div class="frac-input-group">
+                                    <div class="frac">
+                                        <input type="text" id="inp-n" class="math-num-input" placeholder="صورت">
+                                        <div style="height:3px; background:#0f172a; width:100%; margin:4px 0;"></div>
+                                        <input type="text" id="inp-d" class="math-num-input" placeholder="مخرج">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="GameEngine.checkM6G2()">⚙️ چرخش چرخ‌دنده وارونه‌ساز</button>
+                        </div>
+                    `;
+                }
+            },
+
+            /* --- توابع کمکی و ارزیابی ضد اسپویلر برای تک‌تک بازی‌ها --- */
+            showFissionVisual(w, n, d) {
+                AudioEngine.playSlice();
+                const slot = document.getElementById('fission-visual-slot');
+                let html = '';
+                for (let u = 0; u < w; u++) {
+                    let cells = '';
+                    for (let c = 0; c < d; c++) cells += `<div class="unit-cell filled">۱/${MathUtils.toPersianDigits(d)}</div>`;
+                    html += `<div class="unit-bar" style="grid-template-columns:repeat(${d}, 1fr);">${cells}</div>`;
+                }
+                let remCells = '';
+                for (let c = 0; c < d; c++) remCells += `<div class="unit-cell ${c < n ? 'filled-alt' : ''}">${c < n ? '۱/' + MathUtils.toPersianDigits(d) : ''}</div>`;
+                html += `<div class="unit-bar" style="grid-template-columns:repeat(${d}, 1fr);">${remCells}</div>`;
+                slot.innerHTML = html;
+                Mentor.say('واحدهای کامل شکسته شدند! حالا خودت بشمار روی هم چند تکه رنگی داریم و در صورت و مخرج بنویس.', 'normal');
+            },
+
+            checkM1G1(choice) {
+                const item = this.deck[this.currentIndex];
+                if (choice === item.ans) {
+                    this.onCorrect('آفرین مهندس! تشخیص نوع کسر نسبت به ۱ واحد کاملاً درست بود.');
+                } else {
+                    StorageEngine.logMisconception('m1', 'FRACTION_TYPE_CONFUSION', `${item.n}/${item.d}`, choice);
+                    this.onNudge(item.hint);
+                }
+            },
+
+            checkM1G2() {
+                const item = this.deck[this.currentIndex];
+                if (item.mode === 'toFrac') {
+                    const n = MathUtils.parseIntFa(document.getElementById('inp-n').value);
+                    const d = MathUtils.parseIntFa(document.getElementById('inp-d').value);
+                    if (n === item.ansN && d === item.ansD) {
+                        this.onCorrect('فوق‌العاده! تبدیل عدد مخلوط به کسر دقیق انجام شد.');
+                    } else if (d !== item.ansD) {
+                        StorageEngine.logMisconception('m1', 'CHANGED_DENOMINATOR_IN_MIXED', `${item.w} ${item.n}/${item.d}`, `${n}/${d}`);
+                        this.onNudge(`مهندس جان، مخرج اندازه قطعات است و تغییر نمی‌کند (باید همان ${MathUtils.toPersianDigits(item.d)} بماند).`);
+                    } else {
+                        StorageEngine.logMisconception('m1', 'MIXED_TO_IMPROPER_CALC_ERROR', `${item.w} ${item.n}/${item.d}`, `${n}/${d}`);
+                        this.onNudge(`نزدیک شدی! عدد صحیح (${MathUtils.toPersianDigits(item.w)}) را در مخرج (${MathUtils.toPersianDigits(item.d)}) ضرب کن و با صورت (${MathUtils.toPersianDigits(item.n)}) جمع بزن.`);
+                    }
+                } else {
+                    const w = MathUtils.parseIntFa(document.getElementById('inp-w').value);
+                    const n = MathUtils.parseIntFa(document.getElementById('inp-n').value);
+                    const d = MathUtils.parseIntFa(document.getElementById('inp-d').value);
+                    if (w === item.ansW && n === item.ansN && d === item.ansD) {
+                        this.onCorrect('عالی بود! کسر بزرگتر از واحد به درستی به عدد مخلوط تبدیل شد.');
+                    } else {
+                        StorageEngine.logMisconception('m1', 'IMPROPER_TO_MIXED_ERROR', `${item.n}/${item.d}`, `${w} ${n}/${d}`);
+                        this.onNudge(`صورت (${MathUtils.toPersianDigits(item.n)}) را بر مخرج (${MathUtils.toPersianDigits(item.d)}) تقسیم کن؛ خارج‌قسمت می‌شود عدد صحیح و باقی‌مانده می‌شود صورت!`);
+                    }
+                }
+            },
+
+            checkM2G1() {
+                const item = this.deck[this.currentIndex];
+                const n = MathUtils.parseIntFa(document.getElementById('inp-n').value);
+                const d = MathUtils.parseIntFa(document.getElementById('inp-d').value);
+                if (n === item.ansN && d === item.ansD) {
+                    this.onCorrect('تصویر میکروسکوپ کاملاً شفاف شد! کسر مساوی درست است.');
+                } else {
+                    StorageEngine.logMisconception('m2', 'EQUIVALENT_FRACTION_ERROR', `${item.baseN}/${item.baseD} (${item.op})`, `${n}/${d}`);
+                    this.onNudge('یادت باشد برای ساختن کسر مساوی یا ساده کردن، هم صورت و هم مخرج باید در یک عدد یکسان ضرب یا تقسیم شوند.');
+                }
+            },
+
+            checkM2G2() {
+                const item = this.deck[this.currentIndex];
+                const v = MathUtils.parseIntFa(document.getElementById('inp-eq').value);
+                if (v === item.ans) {
+                    this.onCorrect('چرخ‌دنده‌های تساوی قفل شدند! عدد مجهول را درست پیدا کردی.');
+                } else if (v === item.wrongAdd) {
+                    StorageEngine.logMisconception('m2', 'ADDED_INSTEAD_OF_MULTIPLIED_PROPORTION', item.qStr, v);
+                    this.onNudge('دقت کن مهندس! در تساوی کسرها، رابطه بین صورت‌ها و مخرج‌ها «ضرب و تقسیم» است، نه جمع و تفریق! ' + item.hint);
+                } else {
+                    StorageEngine.logMisconception('m2', 'PROPORTION_CALC_ERROR', item.qStr, v);
+                    this.onNudge(item.hint);
+                }
+            },
+
+            renderM3G1Step() {
+                const item = this.deck[this.currentIndex];
+                const st = this.tempState.subStep || 1;
+                const area = document.getElementById('game-content-area');
+                let qText = '', opts = [];
+                if (st === 1) { qText = item.step1Q; opts = item.step1Opts; }
+                else if (st === 2) { qText = item.step2Q; opts = item.step2Opts; }
+                else if (st === 3) { qText = item.step3Q; opts = item.step3Opts; }
+                else { qText = item.step4Q; opts = item.step4Opts; }
+
+                area.innerHTML = `
+                    <div class="workbench-box">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+                            <span class="step-badge">ایستگاه گام ${MathUtils.toPersianDigits(st)} از ۴</span>
+                            <span style="font-weight:bold; color:var(--primary);">${item.title}</span>
+                        </div>
+                        <div style="background:#fff; padding:10px 14px; border-radius:10px; border:1px solid var(--border-color); margin-bottom:14px; text-align:center;">
+                            اعداد داخل خط سورتینگ: ${item.rawSet}
+                        </div>
+                        <p style="font-weight:bold; font-size:1.05rem; margin-bottom:12px;">${qText}</p>
+                        <div class="options-grid" style="grid-template-columns:1fr;">
+                            ${opts.map((o, idx) => `
+                                <button class="option-card-btn" onclick="GameEngine.checkM3G1Sub(${idx})">${o.label}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            },
+
+            checkM3G1Sub(idx) {
+                const item = this.deck[this.currentIndex];
+                const st = this.tempState.subStep || 1;
+                const opts = st === 1 ? item.step1Opts : (st === 2 ? item.step2Opts : (st === 3 ? item.step3Opts : item.step4Opts));
+                const chosen = opts[idx];
+                if (chosen.ok) {
+                    AudioEngine.playSuccess();
+                    if (st < 4) {
+                        this.tempState.subStep = st + 1;
+                        Mentor.say(`گام ${MathUtils.toPersianDigits(st)} با موفقیت انجام شد! حالا برویم سراغ گام ${MathUtils.toPersianDigits(st + 1)}.`, 'success');
+                        this.renderM3G1Step();
+                    } else {
+                        this.tempState.subStep = 1;
+                        this.onCorrect('هر ۴ مرحله مرتب‌سازی کسرها را مثل یک مهندس ارشد کامل کردی!');
+                    }
+                } else {
+                    StorageEngine.logMisconception('m3', `SORTING_STEP_${st}_ERROR`, item.title, chosen.label);
+                    this.onNudge(chosen.err || 'دوباره به مراحل ۴ گانه دقت کن مهندس!');
+                }
+            },
+
+            checkM3G2(sym) {
+                const item = this.deck[this.currentIndex];
+                if (sym === item.ans) {
+                    this.onCorrect('ترازوی مقایسه در تعادل کامل قرار گرفت!');
+                } else {
+                    StorageEngine.logMisconception('m3', 'FRACTION_COMPARISON_ERROR', item.text, sym);
+                    this.onNudge('برای مقایسه دقیق، ابتدا کسرهای بزرگتر از واحد را به عدد مخلوط تبدیل کن یا دو کسر را هم‌مخرج کن.');
+                }
+            },
+
+            checkM4G1() {
+                const item = this.deck[this.currentIndex];
+                const lcm = MathUtils.parseIntFa(document.getElementById('inp-lcm').value);
+                const n = MathUtils.parseIntFa(document.getElementById('inp-n').value);
+                const d = MathUtils.parseIntFa(document.getElementById('inp-d').value);
+
+                if (d === item.sumD) {
+                    StorageEngine.logMisconception('m4', 'ADDED_OR_SUBTRACTED_DENOMINATORS', item.text, `${n}/${d}`);
+                    this.onNudge('خطای مهم شناختی! هرگز مخرج‌ها را با هم جمع یا تفریق نمی‌کنیم (تمرین ۵ صفحه ۲۷ کتاب). ابتدا کوچک‌ترین مضرب مشترک مخرج‌ها را پیدا کن!');
+                    return;
+                }
+                if (lcm !== item.lcm) {
+                    StorageEngine.logMisconception('m4', 'WRONG_LCM', item.text, `LCM=${lcm}`);
+                    this.onNudge(`کوچک‌ترین مضرب مشترک برای مخرج‌های این سوال عدد ${MathUtils.toPersianDigits(item.lcm)} است. مضرب‌ها را دوباره بررسی کن.`);
+                    return;
+                }
+                if (n === item.ansN && d === item.ansD) {
+                    this.onCorrect('فرکانس مخرج مشترک قفل شد و حاصل دقیق به دست آمد!');
+                } else {
+                    StorageEngine.logMisconception('m4', 'NUMERATOR_SCALING_ERROR', item.text, `${n}/${d}`);
+                    this.onNudge('مخرج مشترک درست است! حالا دقت کن هر مخرج چند برابر شده، صورتش را هم در همان عدد ضرب کن و سپس جمع/تفریق را انجام بده.');
+                }
+            },
+
+            checkM4G2() {
+                const item = this.deck[this.currentIndex];
+                const w = MathUtils.parseIntFa(document.getElementById('inp-w').value) || 0;
+                const n = MathUtils.parseIntFa(document.getElementById('inp-n').value);
+                const d = MathUtils.parseIntFa(document.getElementById('inp-d').value);
+
+                if (w === item.ansW && n === item.ansN && d === item.ansD) {
+                    this.onCorrect('عالی بود مهندس! محاسبه اعداد مخلوط و قرض گرفتن واحد کاملاً درست بود.');
+                } else if (w === item.trapW && n === item.trapN) {
+                    StorageEngine.logMisconception('m4', 'FORGOT_TO_BORROW_FROM_WHOLE', item.text, `${w} ${n}/${d}`);
+                    this.onNudge('دقت کن! وقتی از یک عدد صحیح (مثل ۷)، یک عدد مخلوط (مثل ۲ و ۱/۵) کم می‌کنیم، باید ۱ واحد از ۷ قرض بگیریم و آن را به ۵/۵ تبدیل کنیم (یعنی ۶ و ۵/۵ منهای ۲ و ۱/۵).');
+                } else {
+                    StorageEngine.logMisconception('m4', 'MIXED_ADD_SUB_ERROR', item.text, `${w} ${n}/${d}`);
+                    this.onNudge(`راهنمایی: پاسخ درست دارای عدد صحیح ${MathUtils.toPersianDigits(item.ansW)} و مخرج ${MathUtils.toPersianDigits(item.ansD)} است. دوباره صورت را حساب کن!`);
+                }
+            },
+
+            checkM5G1(idx) {
+                const item = this.deck[this.currentIndex];
+                const chosen = item.opts[idx];
+                if (chosen.ok) {
+                    this.onCorrect('مدار روشن شد! حاصل‌ضرب این دو عدد دقیقاً برابر ۱ است.');
+                } else {
+                    StorageEngine.logMisconception('m5', 'RECIPROCAL_MISCONCEPTION', item.raw, chosen.l);
+                    this.onNudge(chosen.e);
+                }
+            },
+
+            checkM5G2() {
+                const item = this.deck[this.currentIndex];
+                const n = MathUtils.parseIntFa(document.getElementById('inp-n').value);
+                const d = MathUtils.parseIntFa(document.getElementById('inp-d').value);
+                if (n === item.ansN && d === item.ansD) {
+                    this.onCorrect('ضرب و ساده‌سازی با موفقیت کامل انجام شد!');
+                } else {
+                    StorageEngine.logMisconception('m5', 'MULTIPLICATION_OR_SIMPLIFY_ERROR', item.text, `${n}/${d}`);
+                    this.onNudge('یادت باشد: ۱) اگر عدد مخلوط داری حتماً اول به کسر تبدیل کن. ۲) صورت‌ها را در هم و مخرج‌ها را در هم ضرب کن (مخرج مشترک نگیر!).');
+                }
+            },
+
+            checkM6G1() {
+                const item = this.deck[this.currentIndex];
+                const v = MathUtils.parseIntFa(document.getElementById('inp-pack').value);
+                if (v === item.ans) {
+                    this.onCorrect('بسته‌بندی پسته‌ها دقیقاً درست انجام شد!');
+                } else {
+                    StorageEngine.logMisconception('m6', 'MEASUREMENT_DIVISION_ERROR', item.text, v);
+                    this.onNudge('برای پیدا کردن تعداد بسته‌ها، ابتدا عدد مخلوط را به کسر تبدیل کن، دو کسر را هم‌مخرج کن و سپس صورت اول را بر صورت دوم تقسیم کن.');
+                }
+            },
+
+            checkM6G2() {
+                const item = this.deck[this.currentIndex];
+                const rn = MathUtils.parseIntFa(document.getElementById('inp-rn').value);
+                const rd = MathUtils.parseIntFa(document.getElementById('inp-rd').value);
+                const n = MathUtils.parseIntFa(document.getElementById('inp-n').value);
+                const d = MathUtils.parseIntFa(document.getElementById('inp-d').value);
+
+                if (rn !== item.revN || rd !== item.revD) {
+                    StorageEngine.logMisconception('m6', 'WRONG_SECOND_FRACTION_RECIPROCAL', item.text, `rev=${rn}/${rd}`);
+                    this.onNudge(`در گام اول، باید «کسر دوم» را (پس از تبدیل عدد مخلوط به کسر) معکوس کنی که می‌شود ${MathUtils.fracHTML(item.revN, item.revD)}.`);
+                    return;
+                }
+                if (n === item.ansN && d === item.ansD) {
+                    this.onCorrect('چرخ‌دنده وارونه‌ساز چرخید و تقسیم با موفقیت به ضرب تبدیل و حل شد!');
+                } else {
+                    StorageEngine.logMisconception('m6', 'DIVISION_FINAL_MULT_ERROR', item.text, `${n}/${d}`);
+                    this.onNudge('معکوس کسر دوم را درست نوشتی! حالا کسر اول را در این کسر معکوس ضرب کن و جواب را تا جای ممکن ساده کن.');
+                }
+            },
+
+            onCorrect(msg) {
+                AudioEngine.playSuccess();
+                this.sessionScore += 20;
+                AppState.addReward(15, 1);
+                Mentor.say(msg, 'success');
+                this.currentIndex++;
+                setTimeout(() => this.renderCurrentQuestion(), 650);
+            },
+
+            onNudge(msg) {
+                AudioEngine.playGentleNudge();
+                Mentor.say(`💡 <b>راهنمایی استاد فرزانه:</b> ${msg}`, 'nudge');
+            },
+
+            finishGameSession() {
+                const mod = AppState.data.modules[AppState.currentModule];
+                if (AppState.currentGame === 1) {
+                    mod.game1Score = Math.max(mod.game1Score, this.sessionScore);
+                } else {
+                    mod.game2Score = Math.max(mod.game2Score, this.sessionScore);
+                }
+                StorageEngine.save(AppState.data);
+                AppState.syncHUD();
+                AudioEngine.playSuccess();
+
+                document.getElementById('game-content-area').innerHTML = `
+                    <div class="workbench-box" style="text-align:center; padding:30px;">
+                        <div style="font-size:3rem; margin-bottom:10px;">🏆💎🌱</div>
+                        <h3 style="color:var(--success); font-size:1.35rem; margin-bottom:8px;">کارگاه عملیاتی با موفقیت تعمیر و تکمیل شد!</h3>
+                        <p style="margin-bottom:18px;">امتیاز کسب‌شده در این دور: <b>${MathUtils.toPersianDigits(this.sessionScore)}</b></p>
+                        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                            <button class="btn btn-primary" onclick="Router.navigateTo('dashboard')">🏠 بازگشت به نقشه آکادمی</button>
+                            ${AppState.currentGame === 1
+                                ? `<button class="btn btn-accent" onclick="Router.navigateTo('game', { moduleId: '${AppState.currentModule}', gameId: 2 })">⚡ ورود به کارگاه دوم این ایستگاه</button>`
+                                : ''
+                            }
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        /* --------------------------------------------------------------------------
+           9. TEACHER DIAGNOSTIC PANEL CONTROLLER
+           -------------------------------------------------------------------------- */
+        const TeacherPanel = {
+            openAuth() {
+                const pass = prompt('لطفاً رمز پنل معلم را وارد کنید (رمز پیش‌فرض: 1405):', '1405');
+                if (MathUtils.toEnglishDigits(pass) === '1405') {
+                    this.render();
+                    Router.navigateTo('teacher');
+                } else if (pass !== null) {
+                    alert('رمز وارد شده صحیح نیست.');
+                }
+            },
+            unlockAllStations() {
+                Object.values(AppState.data.modules).forEach(m => {
+                    m.lessonCompleted = true;
+                    if (m.game1Score === 0) m.game1Score = 100;
+                    if (m.game2Score === 0) m.game2Score = 100;
+                });
+                StorageEngine.save(AppState.data);
+                AppState.syncHUD();
+                this.render();
+                Mentor.say('تمامی ایستگاه‌ها و ستاره‌ها برای نمایش کلاسی معلم فعال شدند.', 'success');
+            },
+            render() {
+                const p = AppState.data.studentProfile;
+                const logs = AppState.data.telemetry.misconceptionLogs;
+                document.getElementById('teacher-summary-box').innerHTML = `
+                    <b>نام دانش‌آموز:</b> ${p.avatar} ${p.name} |
+                    <b>امتیاز تجربه (XP):</b> ${MathUtils.toPersianDigits(p.xp)} |
+                    <b>کریستال‌ها:</b> ${MathUtils.toPersianDigits(p.crystals)} |
+                    <b>تعداد خطاهای شناختی ثبت‌شده:</b> ${MathUtils.toPersianDigits(logs.length)}
+                `;
+                const tbody = document.getElementById('teacher-telemetry-tbody');
+                if (logs.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">هنوز هیچ خطای شناختی برای این دانش‌آموز ثبت نشده است.</td></tr>`;
+                } else {
+                    tbody.innerHTML = logs.map(l => `
+                        <tr>
+                            <td>${l.timestamp}</td>
+                            <td>${l.module.toUpperCase()}</td>
+                            <td><b style="color:var(--nudge);">${l.errorType}</b></td>
+                            <td style="direction:ltr;">${l.question}</td>
+                            <td style="direction:ltr;">${l.studentInput}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+        };
+
+        /* --------------------------------------------------------------------------
+           10. SPA ROUTER
+           -------------------------------------------------------------------------- */
+        const Router = {
+            navigateTo(viewName, params = {}) {
+                document.querySelectorAll('.spa-view').forEach(el => el.classList.remove('active'));
+                const target = document.getElementById(`view-${viewName}`);
+                if (target) target.classList.add('active');
+
+                if (params.moduleId) {
+                    AppState.currentModule = params.moduleId;
+                    const meta = CURRICULUM_META.find(m => m.id === params.moduleId);
+                    if (viewName === 'lesson') {
+                        document.getElementById('lesson-title').textContent = `📖 درسنامه ایستگاه ${MathUtils.toPersianDigits(meta.num)}: ${meta.title}`;
+                        LessonEngine.loadModuleLesson(params.moduleId);
+                        Mentor.say(`در اتاق شبیه‌ساز «${meta.title}» هستیم. اسلایدها را با دقت بررسی کن.`, 'normal');
+                    } else if (viewName === 'game') {
+                        AppState.currentGame = params.gameId || 1;
+                        const gName = AppState.currentGame === 1 ? meta.game1Name : meta.game2Name;
+                        document.getElementById('game-title').textContent = `🎮 ایستگاه ${MathUtils.toPersianDigits(meta.num)} — ${gName}`;
+                        GameEngine.start(params.moduleId, AppState.currentGame);
+                        Mentor.say(`وارد کارگاه «${gName}» شدیم! بار محاسباتی ۱۰۰٪ بر عهده توست مهندس قهرمان.`, 'normal');
+                    }
+                } else if (viewName === 'dashboard') {
+                    DashboardUI.render();
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            AppState.init();
+        });
+    </script>
+</body>
+</html>
